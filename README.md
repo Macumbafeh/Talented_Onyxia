@@ -1,4 +1,8 @@
-# Talented - Kader Edition
+# Talented for Onyxia (Kader Edition)
+
+This is a fork of Talented from bKader(https://github.com/bkader/Talented_WoTLK) updated for use Warmane's Onyxia PTE server with Vanilla (and later TBC) Talents.
+
+Below is the text from Kader until something different is done for support of Onyxia's Vanilla/TBC Talents.
 
 This is the same old **Talented** addon but instead of having its modules as separate addons, they are included (_Talented\_GlyphFrame & Talented\_SpecTabs_).
 
