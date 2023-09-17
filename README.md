@@ -3,12 +3,12 @@
 This is a fork of Talented from bKader(https://github.com/bkader/Talented_WoTLK) updated for use Warmane's Onyxia PTE server with Vanilla (and later TBC) Talents.
 
 ## Install Note:
-
 Make sure you delete all Talented data from your WTF folder.  This may contain data from later expansions which will cause errors in this version.
+
 ---
 Below is the text from Kader until something different is done for support of Onyxia's Vanilla/TBC Talents.
----
 
+---
 This is the same old **Talented** addon but instead of having its modules as separate addons, they are included (_Talented\_GlyphFrame & Talented\_SpecTabs_).
 
 Also, all those separated core files were put into single files depending on the context.
