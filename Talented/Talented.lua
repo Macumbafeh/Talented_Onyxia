@@ -704,12 +704,12 @@ do
 						return DisableTalented("%s:%d:%d MISMATCHED %d ~= %s", class, tab, index, n or "unknown talent-" .. talent.ranks[1], name)
 					end
 					if row ~= talent.row then
-						print("invalid row for talent", tab, index, row, talent.row)
+						print("invalid row for talent", tab, index, name, row, talent.row)
 						invalid = true
 						talent.row = row
 					end
 					if column ~= talent.column then
-						print("invalid column for talent", tab, index, column, talent.column)
+						print("invalid column for talent", tab, index, name, column, talent.column)
 						invalid = true
 						talent.column = column
 					end
@@ -737,7 +737,7 @@ do
 					else
 						local req = talents[talent.req]
 						if not req or req.row ~= req_row or req.column ~= req_column then
-							print("invalid req for talent", tab, index, req and req.row, req_row, req and req.column, req_column)
+							print("invalid req for talent", tab, index, name, req and req.row, req_row, req and req.column, req_column)
 							invalid = true
 							-- it requires another pass to get the right talent.
 							talent.req = 0
@@ -784,11 +784,11 @@ do
 		"ROGUE",
 		"SHAMAN",
 		"WARLOCK",
-		"WARRIOR",
-		"DEATHKNIGHT",
-		"Ferocity",
-		"Cunning",
-		"Tenacity"
+		"WARRIOR"
+--		"DEATHKNIGHT",
+--		"Ferocity",
+--		"Cunning",
+--		"Tenacity"
 	}
 
 	function Talented:GetTemplateStringClass(code, nmap)
@@ -1691,6 +1691,7 @@ do
 	function Talented:ValidateTemplate(template, fix)
 		local class = template.class
 		if not class then return end
+    if string.lower(class) == "deathknight" then return end --no DK in Vanilla
 		local pointsPerTier = self:GetSkillPointsPerTier(template.class)
 		local info = self:UncompressSpellData(class)
 		local fixed
