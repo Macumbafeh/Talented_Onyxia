@@ -910,9 +910,9 @@ end
 do
 	local classNames = {}
 	FillLocalizedClassList(classNames, false)
-	classNames["Ferocity"] = Talented.tabdata["Ferocity"][1].name
-	classNames["Tenacity"] = Talented.tabdata["Tenacity"][1].name
-	classNames["Cunning"] = Talented.tabdata["Cunning"][1].name
+	--classNames["Ferocity"] = Talented.tabdata["Ferocity"][1].name
+	--classNames["Tenacity"] = Talented.tabdata["Tenacity"][1].name
+	--classNames["Cunning"] = Talented.tabdata["Cunning"][1].name
 
 	local menuColorCodes = {}
 	local function fill_menuColorCodes()
@@ -920,9 +920,9 @@ do
 			local color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[name] or default
 			menuColorCodes[name] = string.format("|cff%2x%2x%2x", color.r * 255, color.g * 255, color.b * 255)
 		end
-		menuColorCodes["Ferocity"] = "|cffe0a040"
-		menuColorCodes["Tenacity"] = "|cffe0a040"
-		menuColorCodes["Cunning"] = "|cffe0a040"
+		--menuColorCodes["Ferocity"] = "|cffe0a040"
+		--menuColorCodes["Tenacity"] = "|cffe0a040"
+		--menuColorCodes["Cunning"] = "|cffe0a040"
 	end
 	fill_menuColorCodes()
 
@@ -1007,9 +1007,9 @@ do
 		for index, name in ipairs(CLASS_SORT_ORDER) do
 			list[index] = name
 		end
-		list[#list + 1] = "Ferocity"
-		list[#list + 1] = "Tenacity"
-		list[#list + 1] = "Cunning"
+		--list[#list + 1] = "Ferocity"
+		--list[#list + 1] = "Tenacity"
+		--list[#list + 1] = "Cunning"
 
 		for _, name in ipairs(list) do
 			entry = self:GetNamedMenu(name)
@@ -1192,9 +1192,9 @@ do
 		for index, name in ipairs(CLASS_SORT_ORDER) do
 			list[index] = name
 		end
-		list[#list + 1] = "Ferocity"
-		list[#list + 1] = "Tenacity"
-		list[#list + 1] = "Cunning"
+		--list[#list + 1] = "Ferocity"
+		--list[#list + 1] = "Tenacity"
+		--list[#list + 1] = "Cunning"
 
 		for _, name in ipairs(list) do
 			local s = {
