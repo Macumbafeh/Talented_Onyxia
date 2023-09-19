@@ -4,6 +4,8 @@ But it looks like I was incorrect about the data format being incorrect (struck-
 
 Also on the todo list is to figure out how Warmane is doing Pet Trees and try to impliment it into Talented.
 
+-----
+
 ~~but the format they're saved in to display correctly ([data format](https://github.com/LezChap/Talented_Onyxia/blob/cedd5158518a7d079d9de97a0acf86998925b6f3/Talented/Data.lua#L23-L34)) does not match the rows/columns that are sent from the server, which means you get a long list of "errors" when you load your talents.  Still loads and works, and you can preview the talents of other classes, but I'm doubting that templates will work correctly if you try to use them to spend points.~~
 
 ~~## Example from a Mage:~~
