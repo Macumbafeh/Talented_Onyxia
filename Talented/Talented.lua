@@ -256,14 +256,11 @@ do
 
 	function Talented:OnEnable()
 		self:RawHook("ToggleTalentFrame", true)
-		self:RawHook("ToggleGlyphFrame", true)
 		self:SecureHook("UpdateMicroButtons")
 		self:CheckHookInspectUI()
 
 		self:RegisterEvent("PLAYER_ENTERING_WORLD")
-		UIParent:UnregisterEvent("USE_GLYPH")
 		UIParent:UnregisterEvent("CONFIRM_TALENT_WIPE")
-		self:RegisterEvent("USE_GLYPH")
 		self:RegisterEvent("CONFIRM_TALENT_WIPE")
 		self:RegisterEvent("CHARACTER_POINTS_CHANGED")
 		self:RegisterEvent("PLAYER_TALENT_UPDATE")
@@ -272,7 +269,6 @@ do
 
 	function Talented:OnDisable()
 		self:UnhookInspectUI()
-		UIParent:RegisterEvent("USE_GLYPH")
 		UIParent:RegisterEvent("CONFIRM_TALENT_WIPE")
 	end
 
@@ -281,10 +277,6 @@ do
 		if E then
 			-- spec tabs
 			E.callbacks:Fire("Talented_SpecTabs")
-
-			-- glyph frame
-			self:CreateGlyphFrame()
-			E.callbacks:Fire("Talented_GlyphFrame")
 		end
 	end
 
@@ -404,7 +396,7 @@ do
 			c = string.byte(first, pos)
 		elseif c > 32 and c <= 40 then
 			column = c - 32
-			if column > 4 then
+			if column > 4 then  --force data to need rank breaks
 				row = true
 				column = column - 4
 			end
@@ -438,7 +430,7 @@ do
 
 	local function next_talent_pos(row, column)
 		column = column + 1
-		if column >= 5 then
+		if column >= 5 then  --data to cardcode new rows
 			return row + 1, 1
 		else
 			return row, column
@@ -785,7 +777,6 @@ do
 		"SHAMAN",
 		"WARLOCK",
 		"WARRIOR"
---		"DEATHKNIGHT",
 --		"Ferocity",
 --		"Cunning",
 --		"Tenacity"
@@ -1693,45 +1684,45 @@ do
 		if not class then return end
     if string.lower(class) == "deathknight" then return end --no DK in Vanilla
 		local pointsPerTier = self:GetSkillPointsPerTier(template.class)
-		local info = self:UncompressSpellData(class)
-		local fixed
-		for tab, tree in ipairs(info) do
-			local t = template[tab]
-			if not t then
-				return
-			end
-			local count = 0
-			for i, talent in ipairs(tree) do
-				local value = t[i]
-				if not value then
-					return
-				end
-				if value > 0 then
-					if count < (talent.row - 1) * pointsPerTier or value > (talent.inactive and 0 or #talent.ranks) then
-						if fix then
-							t[i], value, fixed = 0, 0, true
-						else
-							return
-						end
-					end
-					local r = talent.req
-					if r then
-						if t[r] < #tree[r].ranks then
-							if fix then
-								t[i], value, fixed = 0, 0, true
-							else
-								return
-							end
-						end
-					end
-					count = count + value
-				end
-			end
-		end
-		if fixed then
-			self:Print(L["The template '%s' had inconsistencies and has been fixed. Please check it before applying."], template.name)
-			template.points = nil
-		end
+    local info = self:UncompressSpellData(class)
+    local fixed
+    for tab, tree in ipairs(info) do
+      local t = template[tab]
+      if not t then
+        return
+      end
+      local count = 0
+      for i, talent in ipairs(tree) do
+        local value = t[i]
+        if not value then
+          return
+        end
+        if value > 0 then
+          if count < (talent.row - 1) * pointsPerTier or value > (talent.inactive and 0 or #talent.ranks) then
+            if fix then
+              t[i], value, fixed = 0, 0, true
+            else
+              return
+            end
+          end
+          local r = talent.req
+          if r then
+            if t[r] < #tree[r].ranks then
+              if fix then
+                t[i], value, fixed = 0, 0, true
+              else
+                return
+              end
+            end
+          end
+          count = count + value
+        end
+      end
+    end
+    if fixed then
+      self:Print(L["The template '%s' had inconsistencies and has been fixed. Please check it before applying."], template.name)
+      template.points = nil
+    end
 		return true
 	end
 end

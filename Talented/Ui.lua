@@ -209,13 +209,6 @@ do
 		b:SetPoint("LEFT", parent.bactions, "RIGHT", 14, 0)
 		parent.bmode = b
 
-		b = MakeButton(parent)
-		b:SetText(GLYPHS)
-		b:SetSize(max(100, b:GetTextWidth() + 22), 22)
-		b:SetScript("OnClick", function(self) Talented:ToggleGlyphFrame() end)
-		b:SetPoint("LEFT", parent.bmode, "RIGHT", 14, 0)
-		parent.bglyphs = b
-
 		local e = CreateFrame("EditBox", nil, parent, "InputBoxTemplate")
 		e:SetFontObject(ChatFontNormal)
 		e:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
@@ -230,14 +223,14 @@ do
 		end)
 		e:SetScript("OnEnter", Frame_OnEnter)
 		e:SetScript("OnLeave", Frame_OnLeave)
-		e:SetPoint("LEFT", parent.bglyphs, "RIGHT", 14, 1)
+		e:SetPoint("LEFT", parent.bmode, "RIGHT", 14, 1)
 		e.tooltip = L["You can edit the name of the template here. You must press the Enter key to save your changes."]
 		parent.editname = e
 
 		local targetname = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		targetname:SetJustifyH("LEFT")
 		targetname:SetSize(185, 13)
-		targetname:SetPoint("LEFT", parent.bglyphs, "RIGHT", 14, 0)
+		targetname:SetPoint("LEFT", parent.bmode, "RIGHT", 14, 0)
 		parent.targetname = targetname
 
 		do
@@ -304,25 +297,21 @@ do
 
 	local function BaseFrame_SetTabSize(self, tabs)
 		tabs = tabs or 3
-		local bglyphs, editname, targetname, points = self.bglyphs, self.editname, self.targetname, self.points
-		bglyphs:ClearAllPoints()
+		local bmode, editname, targetname, points = self.bmode, self.editname, self.targetname, self.points
 		editname:ClearAllPoints()
 		targetname:ClearAllPoints()
 		points:ClearAllPoints()
 		if tabs == 1 then
-			bglyphs:SetPoint("TOPLEFT", self.bactions, "BOTTOMLEFT", 0, -5)
-			editname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -4)
-			targetname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -5)
+			editname:SetPoint("TOPLEFT", bmode, "BOTTOMLEFT", 0, -4)
+			targetname:SetPoint("TOPLEFT", bmode, "BOTTOMLEFT", 0, -5)
 			points:SetPoint("TOPRIGHT", self, "TOPRIGHT", -8, -56)
 		elseif tabs == 2 then
-			bglyphs:SetPoint("LEFT", self.bmode, "RIGHT", 14, 0)
-			editname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -4)
-			targetname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -5)
+			editname:SetPoint("TOPLEFT", bmode, "BOTTOMLEFT", 0, -4)
+			targetname:SetPoint("TOPLEFT", bmode, "BOTTOMLEFT", 0, -5)
 			points:SetPoint("TOPRIGHT", self, "TOPRIGHT", -8, -31)
 		elseif tabs == 3 then
-			bglyphs:SetPoint("LEFT", self.bmode, "RIGHT", 14, 0)
-			editname:SetPoint("LEFT", bglyphs, "RIGHT", 14, 1)
-			targetname:SetPoint("LEFT", bglyphs, "RIGHT", 14, 0)
+			editname:SetPoint("LEFT", bmode, "RIGHT", 14, 1)
+			targetname:SetPoint("LEFT", bmode, "RIGHT", 14, 0)
 			points:SetPoint("TOPRIGHT", self, "TOPRIGHT", -40, -6)
 		end
 	end
@@ -1005,7 +994,9 @@ do
 
 		local list = {}
 		for index, name in ipairs(CLASS_SORT_ORDER) do
-			list[index] = name
+      if name ~= "DEATHKNIGHT" then
+        list[#list+1] = name
+      end
 		end
 		--list[#list + 1] = "Ferocity"
 		--list[#list + 1] = "Tenacity"
@@ -1190,7 +1181,9 @@ do
 
 		local list = {}
 		for index, name in ipairs(CLASS_SORT_ORDER) do
-			list[index] = name
+      if name ~= "DEATHKNIGHT" then
+        list[#list + 1] = name
+      end
 		end
 		--list[#list + 1] = "Ferocity"
 		--list[#list + 1] = "Tenacity"
