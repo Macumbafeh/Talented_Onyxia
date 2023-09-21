@@ -1,12 +1,20 @@
-I got talents displaying correctly in the UI (Screenshot of Mage Talent Tree: https://i.imgur.com/1IM91GN.png) 
+### 21 September 2023, 1400 EST
+All Player Talents should work.  I got Hunter Pet Trees working, but needs more testing.  I don't know if localizations (changing the language in the client) will break how I got it working, so if you use a non-english client localization, please test that for me and let me know/file an issue if it's broken.  Imports/Exports from website URLs still needs fixed.  Also need to check grabbing talents via inspecting players.
+
+Long-term goal:  Getting the addon to automatically detect what Expansion Phase the server is on, and adjust automatically to TBC and Wrath talents (to not require a re-install of the addon each time the server updates to a new expac).
+
 ----
+I got talents displaying correctly in the UI (Screenshot of Mage Talent Tree: https://i.imgur.com/1IM91GN.png) 
+
+----
+### 19 September 2023
 Tested all classes, and there are no errors for PLAYER talents that I found.  Unfortunately Hunters cause an error/addon crash when they tame a pet due to pet talent changes.  Working on that next, and as soon as I have a version that runs without crashing, I'll update the Github so people can use it.
 
 Notes on Pet Talents: Warmane seems to be using the default trees (Ferocity/Cunning/Tenacity)...but sending custom talents depending on the pet family (cat/boar/etc) you have tamed.  The talents are oddly indexed at first glance (top left is index 1, next over is index 2, index 3 is nil, index 4 skips to the row under 1, index 5 jumps to the bottom right, lots of skipped indexes and jumping around the "tree".  This may be because certain abilities have certain positions/indexes, but only show if the tamed pet had the ability in vanilla...example: Bite always seems to have index 2 after looking at a couple different families of pets.)  I don't think I can make pet templates work, but should be able to get the addon to display current pet's talents with a little work.
 
 
 ----
-
+### Older Updates
 But it looks like I was incorrect about the data format being incorrect (struck-through text below)...I just had some bad characters in the data formatting.  Fixed that and doing a bit more testing to make sure, then I'll upload the fixed code to the repository.
 
 Also on the todo list is to figure out how Warmane is doing Pet Trees and try to impliment it into Talented.
