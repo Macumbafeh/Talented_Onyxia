@@ -1236,7 +1236,7 @@ do
           if not talent.inactive then
             local button = Talented:MakeButton(frame)
             button.id = index
-            if Talented:UncompressPetData(class)[tab][index] then --[tab][index]
+            if Talented:UncompressPetData(class)[tab][index] then
             
               self:SetUIElement(button, tab, index)
 
@@ -1357,14 +1357,15 @@ do
 		if not self.pet then
 			return total == 0 and 1 or total + 9
 		else
-			if total == 0 then
+      return total == 0 and 1 or total + 11
+			--[[if total == 0 then
 				return 10
 			end
 			if total > 16 then
 				return 60 + (total - 15) * 4 -- this spec requires Beast Mastery
 			else
 				return 16 + total * 4
-			end
+			end--]]
 		end
 	end
 
@@ -1380,7 +1381,7 @@ do
 		local at_cap = Talented:IsTemplateAtCap(template)
 		for tab, tree in ipairs(info) do
 			local count = 0
-			for index, talent in ipairs(tree) do
+			for index, talent in pairs(tree) do
 				if not talent.inactive then
 					local rank = template[tab][index]
 					count = count + rank
@@ -1656,7 +1657,7 @@ do
 	local ipairs = ipairs
 
 	function Talented:IsTemplateAtCap(template)
-		local max = RAID_CLASS_COLORS[template.class] and 71 or 20
+		local max = RAID_CLASS_COLORS[template.class] and 51 or 99
 		return self.db.profile.level_cap and self:GetPointCount(template) >= max
 	end
 
@@ -1690,13 +1691,14 @@ do
 
 	function Talented:GetSkillPointsPerTier(class)
 		-- Player Tiers are 5 points appart, Pet Tiers are only 3 points appart.
-		return RAID_CLASS_COLORS[class] and 5 or 3
+		return RAID_CLASS_COLORS[class] and 5 or 0
 	end
 
 	function Talented:GetTalentState(template, tab, index)
 		local s
 		local info = self:UncompressSpellData(template.class)[tab][index]
 		local tier = (info.row - 1) * self:GetSkillPointsPerTier(template.class)
+    if tier == 0 then tier = info.row end
 		local count = self:GetTalentTabCount(template, tab)
 
 		if count < tier then
