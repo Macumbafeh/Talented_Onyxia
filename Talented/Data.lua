@@ -295,9 +295,9 @@ do
 			{background = "PaladinProtection"},
 			{background = "PaladinCombat"}
 		},
-		--Cunning = {{background = "HunterPetCunning"}},
-		--Tenacity = {{background = "HunterPetTenacity"}},
-		--Ferocity = {{background = "HunterPetFerocity"}}
+		Cunning = {{background = "HunterPetCunning"}},
+		Tenacity = {{background = "HunterPetTenacity"}},
+		Ferocity = {{background = "HunterPetFerocity"}}
 	}
 	local locale = GetLocale()
 	if locale == "esES" then

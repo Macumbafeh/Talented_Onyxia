@@ -483,6 +483,9 @@ do
 		if type(data) == "table" then
 			return data
 		end
+    if Talented:isPetClass(class) then
+      return self:UncompressPetData(class)
+    end
 		self:Debug("UNCOMPRESS CLASSDATA", class)
 		data = handle_tabs(strsplit("|", data))
 		self.spelldata[class] = data
@@ -572,7 +575,12 @@ do
 	end
 
 	function Talented:GetTalentIcon(class, tab, index)
-		local spell = self:UncompressSpellData(class)[tab][index].ranks[1]
+    local spell
+    if Talented:isPetClass(class) then
+      spell = self:UncompressPetData(class)[tab][index].ranks[1]
+    else
+		  spell = self:UncompressSpellData(class)[tab][index].ranks[1]
+    end
 		return (select(3, GetSpellInfo(spell)))
 	end
 
@@ -1072,7 +1080,7 @@ end
 do
 	local select, ipairs = select, ipairs
 	local GetTalentInfo = GetTalentInfo
-
+  
 	function Talented:UpdatePlayerSpecs()
 		if GetNumTalentTabs() == 0 then return end
 		local class = select(2, UnitClass "player")
@@ -1190,60 +1198,123 @@ do
 
 		Talented.Pool:changeSet(self.name)
 		wipe(self.elements)
-		local talents = Talented:UncompressSpellData(class)
-		if not LAYOUT_OFFSET_X then
-			RecalcLayout(Talented.db.profile.offset)
+    
+    local talents
+    local top_offset, bottom_offset = LAYOUT_BASE_X, LAYOUT_BASE_X, size_y
+
+    if Talented:isPetClass(class) then
+      talents = Talented:UncompressPetData(class)
+      if not LAYOUT_OFFSET_X then
+        RecalcLayout(Talented.db.profile.offset)
+      end
+      if self.frame.SetTabSize then
+        local n = #talents
+        self.frame:SetTabSize(n)
+        top_offset = top_offset + (4 - n) * LAYOUT_BASE_Y
+        if Talented.db.profile.add_bottom_offset then
+          bottom_offset = bottom_offset + LAYOUT_BASE_Y
+        end
+      end
+      local first_tree = talents[1]
+      size_y = first_tree[#first_tree].row * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
+
+      for tab, tree in pairs(talents) do
+        local frame = Talented:MakeTalentFrame(self.frame, LAYOUT_SIZE_X, size_y)
+        frame.tab = tab
+        frame.view = self
+        frame.pet = self.pet
+
+        local background = Talented.tabdata[class][tab].background
+        frame.topleft:SetTexture("Interface\\TalentFrame\\" .. background .. "-TopLeft")
+        frame.topright:SetTexture("Interface\\TalentFrame\\" .. background .. "-TopRight")
+        frame.bottomleft:SetTexture("Interface\\TalentFrame\\" .. background .. "-BottomLeft")
+        frame.bottomright:SetTexture("Interface\\TalentFrame\\" .. background .. "-BottomRight")
+
+        self:SetUIElement(frame, tab)
+        
+        for index, talent in pairs(tree) do
+          if not talent.inactive then
+            local button = Talented:MakeButton(frame)
+            button.id = index
+            if Talented:UncompressPetData(class)[tab][index] then --[tab][index]
+            
+              self:SetUIElement(button, tab, index)
+
+              button:SetPoint("TOPLEFT", offset(talent.row, talent.column))
+              button.texture:SetTexture(Talented:GetTalentIcon(class, tab, index))
+              button:Show()
+            end
+          end
+        end
+
+        for index, talent in pairs(tree) do
+          local req = talent.req
+          if req then
+            local elements = {}
+            Talented.DrawLine(elements, frame, offset, talent.row, talent.column, tree[req].row, tree[req].column)
+            self:SetUIElement(elements, tab, index, req)
+          end
+        end
+
+        frame:SetPoint("TOPLEFT", (tab - 1) * LAYOUT_SIZE_X + LAYOUT_BASE_X, -top_offset)
+      end
+    else
+      talents = Talented:UncompressSpellData(class)
+      if not LAYOUT_OFFSET_X then
+        RecalcLayout(Talented.db.profile.offset)
+      end
+      if self.frame.SetTabSize then
+        local n = #talents
+        self.frame:SetTabSize(n)
+        top_offset = top_offset + (4 - n) * LAYOUT_BASE_Y
+        if Talented.db.profile.add_bottom_offset then
+          bottom_offset = bottom_offset + LAYOUT_BASE_Y
+        end
+      end
+      local first_tree = talents[1]
+      size_y = first_tree[#first_tree].row * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
+      
+      for tab, tree in ipairs(talents) do
+        local frame = Talented:MakeTalentFrame(self.frame, LAYOUT_SIZE_X, size_y)
+        frame.tab = tab
+        frame.view = self
+        frame.pet = self.pet
+
+        local background = Talented.tabdata[class][tab].background
+        frame.topleft:SetTexture("Interface\\TalentFrame\\" .. background .. "-TopLeft")
+        frame.topright:SetTexture("Interface\\TalentFrame\\" .. background .. "-TopRight")
+        frame.bottomleft:SetTexture("Interface\\TalentFrame\\" .. background .. "-BottomLeft")
+        frame.bottomright:SetTexture("Interface\\TalentFrame\\" .. background .. "-BottomRight")
+
+        self:SetUIElement(frame, tab)
+        
+        for index, talent in ipairs(tree) do
+          if not talent.inactive then
+            local button = Talented:MakeButton(frame)
+            button.id = index
+
+            self:SetUIElement(button, tab, index)
+
+            button:SetPoint("TOPLEFT", offset(talent.row, talent.column))
+            button.texture:SetTexture(Talented:GetTalentIcon(class, tab, index))
+            button:Show()
+          end
+        end
+
+        for index, talent in ipairs(tree) do
+          local req = talent.req
+          if req then
+            local elements = {}
+            Talented.DrawLine(elements, frame, offset, talent.row, talent.column, tree[req].row, tree[req].column)
+            self:SetUIElement(elements, tab, index, req)
+          end
+        end
+
+        frame:SetPoint("TOPLEFT", (tab - 1) * LAYOUT_SIZE_X + LAYOUT_BASE_X, -top_offset)
+      end
 		end
-		local top_offset, bottom_offset = LAYOUT_BASE_X, LAYOUT_BASE_X
-		if self.frame.SetTabSize then
-			local n = #talents
-			self.frame:SetTabSize(n)
-			top_offset = top_offset + (4 - n) * LAYOUT_BASE_Y
-			if Talented.db.profile.add_bottom_offset then
-				bottom_offset = bottom_offset + LAYOUT_BASE_Y
-			end
-		end
-		local first_tree = talents[1]
-		local size_y = first_tree[#first_tree].row * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
-		for tab, tree in ipairs(talents) do
-			local frame = Talented:MakeTalentFrame(self.frame, LAYOUT_SIZE_X, size_y)
-			frame.tab = tab
-			frame.view = self
-			frame.pet = self.pet
-
-			local background = Talented.tabdata[class][tab].background
-			frame.topleft:SetTexture("Interface\\TalentFrame\\" .. background .. "-TopLeft")
-			frame.topright:SetTexture("Interface\\TalentFrame\\" .. background .. "-TopRight")
-			frame.bottomleft:SetTexture("Interface\\TalentFrame\\" .. background .. "-BottomLeft")
-			frame.bottomright:SetTexture("Interface\\TalentFrame\\" .. background .. "-BottomRight")
-
-			self:SetUIElement(frame, tab)
-
-			for index, talent in ipairs(tree) do
-				if not talent.inactive then
-					local button = Talented:MakeButton(frame)
-					button.id = index
-
-					self:SetUIElement(button, tab, index)
-
-					button:SetPoint("TOPLEFT", offset(talent.row, talent.column))
-					button.texture:SetTexture(Talented:GetTalentIcon(class, tab, index))
-					button:Show()
-				end
-			end
-
-			for index, talent in ipairs(tree) do
-				local req = talent.req
-				if req then
-					local elements = {}
-					Talented.DrawLine(elements, frame, offset, talent.row, talent.column, tree[req].row, tree[req].column)
-					self:SetUIElement(elements, tab, index, req)
-				end
-			end
-
-			frame:SetPoint("TOPLEFT", (tab - 1) * LAYOUT_SIZE_X + LAYOUT_BASE_X, -top_offset)
-		end
-		self.frame:SetSize(#talents * LAYOUT_SIZE_X + LAYOUT_BASE_X * 2, size_y + top_offset + bottom_offset)
+    
+    self.frame:SetSize(#talents * LAYOUT_SIZE_X + LAYOUT_BASE_X * 2, size_y + top_offset + bottom_offset)
 		self.frame:SetScale(Talented.db.profile.scale)
 
 		self.class = class
@@ -1686,6 +1757,7 @@ do
 		local pointsPerTier = self:GetSkillPointsPerTier(template.class)
     local info = self:UncompressSpellData(class)
     local fixed
+    if class == "Ferocity" then return true end  --testing
     for tab, tree in ipairs(info) do
       local t = template[tab]
       if not t then
@@ -1929,8 +2001,13 @@ do
 		if not GameTooltip:IsOwned(frame) then
 			GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
 		end
-
-		local tree = self.spelldata[class][tab]
+    
+    local tree
+    if self:isPetClass(class) then
+      tree = self:UncompressPetData(class)[tab]
+    else
+      tree = self.spelldata[class][tab]
+    end
 		local info = tree[index]
 		GameTooltip:ClearLines()
 		local tier = (info.row - 1) * self:GetSkillPointsPerTier(class)
@@ -2286,11 +2363,87 @@ do
 		local has_talent = GetTalentInfo(1, 1, nil, true, talentGroup) or GetTalentInfo(1, 2, nil, true, talentGroup)
 		return has_talent
 	end
+  
+  function Talented:isPetClass(class)
+    if class == "Ferocity" or class == "Tenacity" or class == "Cunning" then
+      return true
+    end
+  end
+  
+  function Talented:UncompressPetData(class)
+    local info = {}
+    info[1] = {}
+    --info[1].name = GetTalentTabInfo(1,nil,true)
+    local petrankID 
+    petRankID = {
+      ["Great Stamina"] = {4188, 4189, 4190, 4190, 4191, 4192, 4193, 4194, 5041, 5042},
+      ["Natural Armor"] = {24549, 24550, 24551, 24552, 24553, 24554, 24555, 24629, 24630},
+      ["Fire Resistance"] = {23992, 24439, 24444, 24445},
+      ["Frost Resistance"] = {24446, 24447, 24448, 24449},
+      ["Nature Resistance"] = {24492, 24502, 24503, 24504},
+      ["Arcane Resistance"] = {24493, 24497, 24500, 24501},
+      ["Shadow Resistance"] = {24488, 24505, 24507, 24506},
+      Screech = {24423, 24577, 24578, 24579},
+      Bite = {17253, 17255, 17256, 17257, 17258, 17259, 17260, 17261},
+      Claw = {16827, 16828, 16829, 16830, 16831, 16832, 3010, 3009},
+      ["Furious Howl"] = {24604, 24605, 24603, 24597},
+      Dash = {23099, 23109, 23110},
+      Dive = {23145, 23147, 23148},
+      Prowl = {24450, 24452, 24453},
+      Charge = {7371, 26177, 26178, 26179, 26201, 27685},
+      Cower = {1742, 1753, 1754, 1755, 1756, 16697},
+      ["Shell Shield"] = {26064},
+      Thunderstomp = {26090, 26187, 26188},
+      ["Lightning Breath"] = {24844, 25008, 25009, 25010, 25011, 25012},
+      ["Scorpid Poison"] = {24640, 24583, 24586, 24587}
+      }
+    for i = 1, 20 do
+      local name, _, tier, col, _, maxRank = GetTalentInfo(GetActiveTalentGroup(nil, true), i, nil, true)
+      if name then
+        info[1][i] = {
+          column = col,
+          row = tier,
+          ranks = petRankID[name]
+          }
+      end
+    end
+    self.tabdata[class][1].name = TALENT_SPEC_PET_PRIMARY
+    return info
+  end
 
 	function Talented:PET_TALENT_UPDATE()
 		local class = self:GetPetClass()
 		if not class or not PetTalentsAvailable() then return end
-		self:FixAlternatesTalents(class)
+    --add pet tree here?
+    local template = self.pet_current
+    if not template then
+			template = {pet = true, name = TALENT_SPEC_PET_PRIMARY}
+			self.pet_current = template
+		end
+    local talentGroup = GetActiveTalentGroup(nil, true)
+		template.talentGroup = talentGroup
+		template.class = class
+    local info = self:UncompressPetData(class)    
+    
+    for tab, tree in pairs(info) do
+      local ttab = template[tab]
+      if not ttab then
+        ttab = {}
+        template[tab] = ttab
+      end
+      for index in pairs(tree) do
+        ttab[index] = select(5, GetTalentInfo(tab, index, nil, true, talentGroup))
+      end
+    end
+    for _, view in self:IterateTalentViews(template) do
+			view:SetClass(class)
+			view:Update()
+		end
+		if self.mode == "apply" then
+			self:CheckTalentPointsApplied()
+    end
+		--[[--original code below
+    self:FixAlternatesTalents(class)
 		local template = self.pet_current
 		if not template then
 			template = {pet = true, name = TALENT_SPEC_PET_PRIMARY}
@@ -2316,7 +2469,7 @@ do
 		end
 		if self.mode == "apply" then
 			self:CheckTalentPointsApplied()
-		end
+		end--]]
 	end
 
 	function Talented:UNIT_PET(_, unit)
@@ -2330,7 +2483,7 @@ do
 		self:RegisterEvent("PET_TALENT_UPDATE")
 		self:PET_TALENT_UPDATE()
 	end
-
+  
 	function Talented:FixAlternatesTalents(class)
 		local talentGroup = GetActiveTalentGroup(nil, true)
 		local data = self:UncompressSpellData(class)[1]
