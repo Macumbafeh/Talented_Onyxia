@@ -1216,7 +1216,7 @@ do
         end
       end
       local first_tree = talents[1]
-      size_y = first_tree[#first_tree].row * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
+      size_y = 4 * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
 
       for tab, tree in pairs(talents) do
         local frame = Talented:MakeTalentFrame(self.frame, LAYOUT_SIZE_X, size_y)
@@ -1698,9 +1698,11 @@ do
 		local s
 		local info = self:UncompressSpellData(template.class)[tab][index]
 		local tier = (info.row - 1) * self:GetSkillPointsPerTier(template.class)
-    if tier == 0 then tier = info.row end
 		local count = self:GetTalentTabCount(template, tab)
-
+    if self:isPetClass(class) then 
+      tier = 0
+      count = select(3, GetTalentTabInfo(1,nil,true))
+    end
 		if count < tier then
 			s = false
 		else
@@ -2417,7 +2419,7 @@ do
 		local class = self:GetPetClass()
 		if not class or not PetTalentsAvailable() then return end
     --add pet tree here?
-    local template = self.pet_current
+    local template = nil --= self.pet_current
     if not template then
 			template = {pet = true, name = TALENT_SPEC_PET_PRIMARY}
 			self.pet_current = template
