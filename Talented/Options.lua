@@ -12,6 +12,7 @@ Talented.defaults = {
 		scale = 1,
 		add_bottom_offset = true,
 		framepos = {},
+		--glyph_on_talent_swap = "active",
 		restore_bars = false
 	},
 	global = {templates = {}},
@@ -108,6 +109,23 @@ Talented.options = {
 					desc = L["If enabled, action bars will be restored automatically after successful respec. Applied template name until first dash is used as parameter (lower case, trailing space removed).\nRequires ABS addon to work."],
 					order = 9
 				},
+				--[[header2 = {
+					type = "header",
+					name = L["Glyph frame options"],
+					order = 10
+				},
+				glyph_on_talent_swap = {
+					name = L["Glyph frame policy on spec swap"],
+					desc = L["Select the way the glyph frame handle spec swaps."],
+					type = "select",
+					order = 11,
+					width = "double",
+					values = {
+						keep = L["Keep the shown spec"],
+						swap = L["Swap the shown spec"],
+						active = L["Always show the active spec after a change"]
+					}
+				},--]]
 				header3 = {
 					type = "header",
 					name = L["Display options"],
