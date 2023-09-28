@@ -58,7 +58,6 @@ do
         [1] = 24488, [2] = 24505, [3] = 24507, [4] = 24506},
       },
     }
-  
   local FamilySkills = {
     [2] = { --Bite
       column = 2, row = 1,
@@ -123,6 +122,20 @@ do
         [1] = 24604, [2] = 24605, [3] = 24603, [4] = 24597},
       },
     }
+ 
+  local function deep_copy(t, seen)
+    local result = {}
+    seen = seen or {}
+    seen[t] = result
+    for key, value in pairs(t) do
+        if type(value) == "table" then
+            result[key] = seen[value] or deep_copy(value, seen)
+        else
+            result[key] = value
+        end
+    end
+    return result
+  end
  
 	local spelldata = {
     --[[legend:
@@ -354,23 +367,23 @@ do
     "%20111;20112;20113,!20218,"..
     "&g20049;20056;20057;20058;20059,"..
     "&20066",
-    Bat = {AllPets},
-    Bear = {AllPets},
-    Boar = {AllPets},
-    Cat = {AllPets},
-    Crab = {AllPets},
-    Crocolisk = {AllPets},
-    Gorilla = {AllPets},
-    Hyena = {AllPets},
-    Raptor = {AllPets},
-    Scorpid = {AllPets},
-    Spider = {AllPets},
-    Tallstrider = {AllPets},
-    Turtle = {AllPets},
-    Wolf = {AllPets},
-    ["Bird of Prey"]  = {AllPets},
-    ["Carrion Bird"] = {AllPets},
-    ["Wind Serpent"] = {AllPets},
+    Bat = {deep_copy(AllPets)},
+    Bear = {deep_copy(AllPets)},
+    Boar = {deep_copy(AllPets)},
+    Cat = {deep_copy(AllPets)},
+    Crab = {deep_copy(AllPets)},
+    Crocolisk = {deep_copy(AllPets)},
+    Gorilla = {deep_copy(AllPets)},
+    Hyena = {deep_copy(AllPets)},
+    Raptor = {deep_copy(AllPets)},
+    Scorpid = {deep_copy(AllPets)},
+    Spider = {deep_copy(AllPets)},
+    Tallstrider = {deep_copy(AllPets)},
+    Turtle = {deep_copy(AllPets)},
+    Wolf = {deep_copy(AllPets)},
+    ["Bird of Prey"]  = {deep_copy(AllPets)},
+    ["Carrion Bird"] = {deep_copy(AllPets)},
+    ["Wind Serpent"] = {deep_copy(AllPets)},
     --Tenacity = '61682;61683,61685,61686;61687;61688,61689;61690,53182;53183;53184,19596,d53481;53482,d53175;53176,61680;61681;52858,53178;53179,53409;53411,63900,"53450;53451,53427;53429;53430,53478,f53477,d53480,53476,!62764;62765,c62758;62762',
 		--Cunning = '61682;61683,61684,*23145,61686;61687;61688,61689;61690,19596,e53483;53485,*e53554;53555,53514;53516,53182;53183;53184,61680;61681;52858,53409;53411,54044,&53427;53429;53430,52234;53497,f53511;53512,53508,53517,d53490,53450;53451,d62758;62762,"b53480',
     --Ferocity = "61682;61683,61684,*23145,61686;61687;61688,61689;61690,53180;53181,53186;53187,53182;53183;53184,19596,61680;61681;52858,!53409;53411,61685,*52825,!g55709,53203;53204;53205,53427;53429;53430,53401,d53426,d53434,%62759;62760,!b62758;62762",
@@ -415,8 +428,8 @@ do
   spelldata["Carrion Bird"][1][13] = FamilySkills[13]
   spelldata["Wind Serpent"][1][2] = FamilySkills[2]
   spelldata["Wind Serpent"][1][12] = FamilySkills[12]
-  spelldata["Wind Serpent"][1][19] = FamilySkills[19]
-  
+  spelldata["Wind Serpent"][1][19] = FamilySkills[19]--]]
+
 	Talented.spelldata = spelldata
 end
 

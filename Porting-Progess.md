@@ -1,3 +1,14 @@
+### 28 September 2023, 3:30PM EST
+So I fixed the pet tree error from last night.  Silly me forgetting Lua tables are objects and setting a new table equal to the master table (like a normal variable) creates a reference and not a copy/clone of the table.  Fixed that, and now the Pet Trees seem to be working perfectly and changing/updating correctly.  Still not sure how they'll act to non-English localizations (test and tell me please!).  And I haven't tested each pet family yet.  I'm also not sure on the total number of pet points available at 60, or how the math is done for earning pet points, so that code will need adjusted as I get it.
+
+As always, if you're using the Addon and fine any bugs or things not working that I said are, please report them to the Issues so I can try to iron them out and fix them.
+
+tl/dr: The core features of the Addon seems fully functional for all classes. Here's the To-Do list moving forward:
+* Import/Export (to/from URL strings) working.
+* Make Templates accessible for Pet Family Trees.
+* Check/fix the "Inspect Target" to get talent trees/templates functionality.
+* Make Addon adapt automatically as Realm progresses from Vanilla to TBC and finally Wrath.
+
 ### 27 September 2023, 11PM EST
 I took a few days waiting for a response on the devs on a possible API change around GetTalentTabInfo(...) returning the 3 Wrath pet trees (Ferocity/Tenacity/Cunning) instead of Pet Familes (Cat/Boar/Bear/etc)  Warmane's Onyxia design is to put each Pet Family's trainable skills from Vanilla into a "Pet Talent Tree" for that family...but it's doing it oddly compared to how Blizard has sent talents before (ie talents aren't in consecutive indexes in the custom data tables for Onyxia).  (If you want to read more on that: https://www.warmane.com/bugtracker/report/118550 and https://www.warmane.com/bugtracker/report/118519#comment-109931 )  Once they said they weren't going to change it, it took a few days to code up the data, and finding all the minor changes needed to make to get it to parse through the data tables (mostly?) correctly.  In the process, I tried to bring back (in commented out code) all the code I removed or edited from the Wrath version that doesn't apply to Vanilla (like Glyphs) to make the Long-term goal of making the addon automatically switch to using it again when we move between the phases on Onyxia. However, there's still a problem with the Pet Talent Window not wiping buttons/skills when you swap pets. I will start to troubleshoot and fix next, but it's bedtime I wanted to get a version up that doesn't crash the addon completely when switching pets.
 

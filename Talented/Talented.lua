@@ -1327,7 +1327,6 @@ do
 					local rank = template[tab][index]
 					count = count + rank
 					local button = self:GetUIElement(tab, index)
-          --print(button)
 					local color = GRAY_FONT_COLOR
 					local state = Talented:GetTalentState(template, tab, index)
 					if state == "empty" and (at_cap or self.mode == "view") then
@@ -1697,31 +1696,6 @@ do
 		return true
 	end
 
-  local function tprint (tbl, indent)
-    if not indent then indent = 0 end
-    local toprint = string.rep(" ", indent) .. "{\r\n"
-    indent = indent + 2 
-    for k, v in pairs(tbl) do
-      toprint = toprint .. string.rep(" ", indent)
-      if (type(k) == "number") then
-        toprint = toprint .. "[" .. k .. "] = "
-      elseif (type(k) == "string") then
-        toprint = toprint  .. k ..  "= "   
-      end
-      if (type(v) == "number") then
-        toprint = toprint .. v .. ",\r\n"
-      elseif (type(v) == "string") then
-        toprint = toprint .. "\"" .. v .. "\",\r\n"
-      elseif (type(v) == "table") then
-        toprint = toprint .. tprint(v, indent + 2) .. ",\r\n"
-      else
-        toprint = toprint .. "\"" .. tostring(v) .. "\",\r\n"
-      end
-    end
-    toprint = toprint .. string.rep(" ", indent-2) .. "}"
-    return toprint
-  end
-
 	function Talented:ValidateTemplate(template, fix)
 		local class = template.class
 		if not class then return end
@@ -1735,16 +1709,12 @@ do
 				return
 			end
 			local count = 0
-      --print(tprint(template))
 			for i, talent in pairs(tree) do
 				local value = t[i]
 				if not value then
-          print(i)
-          print(tprint(t))
 					return
 				end
 				if value > 0 then
-          --print(class, value) print(tprint(talent))
 					if count < (talent.row - 1) * pointsPerTier or value > (talent.inactive and 0 or #talent.ranks) then
 						if fix then
 							t[i], value, fixed = 0, 0, true
@@ -2356,46 +2326,20 @@ do
     }
     return petClasses[class] 
   end
-  
-  local function tprint (tbl, indent)
-    if not indent then indent = 0 end
-    local toprint = string.rep(" ", indent) .. "{\r\n"
-    indent = indent + 2 
-    for k, v in pairs(tbl) do
-      toprint = toprint .. string.rep(" ", indent)
-      if (type(k) == "number") then
-        toprint = toprint .. "[" .. k .. "] = "
-      elseif (type(k) == "string") then
-        toprint = toprint  .. k ..  "= "   
-      end
-      if (type(v) == "number") then
-        toprint = toprint .. v .. ",\r\n"
-      elseif (type(v) == "string") then
-        toprint = toprint .. "\"" .. v .. "\",\r\n"
-      elseif (type(v) == "table") then
-        toprint = toprint .. tprint(v, indent + 2) .. ",\r\n"
-      else
-        toprint = toprint .. "\"" .. tostring(v) .. "\",\r\n"
-      end
-    end
-    toprint = toprint .. string.rep(" ", indent-2) .. "}"
-    return toprint
-  end
-  
+
 	function Talented:PET_TALENT_UPDATE()
 		local class = self:GetPetClass()
 		if not class or not PetTalentsAvailable() then return end
-		--self:FixAlternatesTalents(class)
+		self:FixAlternatesTalents(class)
 		local template = self.pet_current
 		if not template then
-			template = {pet = true, name = TALENT_SPEC_PET_PRIMARY}
+			template = {pet = true, name = UnitCreatureFamily("pet") }--TALENT_SPEC_PET_PRIMARY}
 			self.pet_current = template
 		end
 		local talentGroup = GetActiveTalentGroup(nil, true)
 		template.talentGroup = talentGroup
 		template.class = class
 		local info = self:UncompressSpellData(class)
-    --print(tprint(info))
 		for tab, tree in pairs(info) do
 			local ttab = template[tab]
 			if not ttab then
@@ -2430,7 +2374,8 @@ do
 	function Talented:FixAlternatesTalents(class)
 		local talentGroup = GetActiveTalentGroup(nil, true)
 		local data = self:UncompressSpellData(class)[1]
-		for index = 1, #data - 1 do
+		--[[ Original Code
+    for index = 1, #data - 1 do
 			local info = data[index]
 			local ninfo = data[index + 1]
 			if info.row == ninfo.row and info.column == ninfo.column then
@@ -2458,7 +2403,20 @@ do
 					end
 				end
 			end
-		end
+		end--]]
+    for index in pairs(data) do
+    	local talent = GetTalentInfo(1, index, nil, true, talentGroup)
+      for _, template in pairs(self.db.global.templates) do
+        if template.class == class and not template.code then
+          local value = template[1][index]
+          if talent then
+            template[1][index] = value
+          else
+            template[1][index] = nil
+          end
+        end
+      end
+    end
 		for _, view in self:IterateTalentViews() do
 			if view.class == class then
 				view:SetClass(view.class, true)
