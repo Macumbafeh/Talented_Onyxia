@@ -381,7 +381,7 @@ do
     Tallstrider = {deep_copy(AllPets)},
     Turtle = {deep_copy(AllPets)},
     Wolf = {deep_copy(AllPets)},
-    ["Bird of Prey"]  = {deep_copy(AllPets)},
+    ["Bird of Prey"] = {deep_copy(AllPets)},
     ["Carrion Bird"] = {deep_copy(AllPets)},
     ["Wind Serpent"] = {deep_copy(AllPets)},
     --Tenacity = '61682;61683,61685,61686;61687;61688,61689;61690,53182;53183;53184,19596,d53481;53482,d53175;53176,61680;61681;52858,53178;53179,53409;53411,63900,"53450;53451,53427;53429;53430,53478,f53477,d53480,53476,!62764;62765,c62758;62762',
@@ -428,7 +428,7 @@ do
   spelldata["Carrion Bird"][1][13] = FamilySkills[13]
   spelldata["Wind Serpent"][1][2] = FamilySkills[2]
   spelldata["Wind Serpent"][1][12] = FamilySkills[12]
-  spelldata["Wind Serpent"][1][19] = FamilySkills[19]--]]
+  spelldata["Wind Serpent"][1][19] = FamilySkills[19]
 
 	Talented.spelldata = spelldata
 end

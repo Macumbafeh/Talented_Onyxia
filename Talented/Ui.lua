@@ -197,14 +197,14 @@ do
 
 		local b = MakeButton(parent)
 		b:SetText(L["Actions"])
-		b:SetSize(max(100, b:GetTextWidth() + 22), 22)
+		b:SetSize(max(90, b:GetTextWidth() + 22), 22)
 		b:SetScript("OnClick", function(self) Talented:OpenActionMenu(self) end)
 		b:SetPoint("TOPLEFT", 5, -4)
 		parent.bactions = b
 
 		b = MakeButton(parent)
 		b:SetText(L["Templates"])
-		b:SetSize(max(100, b:GetTextWidth() + 22), 22)
+		b:SetSize(max(90, b:GetTextWidth() + 22), 22)
 		b:SetScript("OnClick", function(self) Talented:OpenTemplateMenu(self) end)
 		b:SetPoint("LEFT", parent.bactions, "RIGHT", 14, 0)
 		parent.bmode = b
@@ -255,6 +255,7 @@ do
 
 		local cb = CreateFrame("Checkbutton", nil, parent)
 		parent.checkbox = cb
+    cb.parent = parent
 
 		local makeTexture = function(path, blend)
 			local t = cb:CreateTexture()
@@ -1462,6 +1463,10 @@ do
 			end
 			local name, icon, points = GetTalentTabInfo(i, nil, pet, talentGroup)
 			cache.name, cache.icon, cache.points = name, icon, points
+      if pet then 
+        cache.name = UnitCreatureFamily("pet")
+        cache.icon = GetPetIcon()
+      end
 			if points < min then
 				min = points
 			end

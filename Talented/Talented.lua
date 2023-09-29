@@ -1152,7 +1152,7 @@ do
 			LAYOUT_DELTA_X = LAYOUT_OFFSET_X / 2
 			LAYOUT_DELTA_Y = LAYOUT_OFFSET_Y / 2
 
-			LAYOUT_SIZE_X --[[LAYOUT_MAX_COLUMNS]] = 4 * LAYOUT_OFFSET_X + LAYOUT_DELTA_X
+      LAYOUT_SIZE_X --[[LAYOUT_MAX_COLUMNS]] = 4 * LAYOUT_OFFSET_X + LAYOUT_DELTA_X + LAYOUT_DELTA_X / 2
 
 			return true
 		end
@@ -1216,6 +1216,7 @@ do
 		local size_y = first_tree[#first_tree].row * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
     if Talented:isPetClass(class) then
       size_y = 4 * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
+      bottom_offset = (bottom_offset / 2) + LAYOUT_BASE_Y
     end
 		for tab, tree in pairs(talents) do
 			local frame = Talented:MakeTalentFrame(self.frame, LAYOUT_SIZE_X, size_y)
@@ -1298,7 +1299,7 @@ do
 		if not self.pet then
 			return total == 0 and 1 or total + 9
 		else
-      return total == 0 and 1 or total + 11
+      return total == 0 and 1 or total * 2
 			--[[if total == 0 then
 				return 10
 			end
@@ -1390,6 +1391,11 @@ do
 			end
 			local frame = self:GetUIElement(tab)
 			frame.name:SetFormattedText(L["%s (%d)"], Talented.tabdata[template.class][tab].name, count)
+      if frame.pet then
+        frame.name:SetPoint("TOP", 0, 42)
+      else
+        frame.name:SetPoint("TOP", 0, -4)
+      end
 			total = total + count
 			local clear = frame.clear
 			if self.mode ~= "edit" or count <= 0 or self.spec then
@@ -1442,6 +1448,11 @@ do
 				end
 				cb:Show()
 				cb.label:SetText(L["Edit talents"])
+        if template.pet then
+          cb:SetPoint("BOTTOMLEFT", cb.parent, "BOTTOMLEFT", 14, 22)
+        else
+      		cb:SetPoint("BOTTOMLEFT", cb.parent, "BOTTOMLEFT", 14, 8)
+        end
 				cb.tooltip = L["Toggle editing of talents."]
 			elseif template.talentGroup then
 				cb:Hide()
@@ -1462,8 +1473,9 @@ do
 		local targetname = self.frame.targetname
 		if targetname then
 			if template.pet then
-				targetname:Show()
-				targetname:SetText(TALENT_SPEC_PET_PRIMARY)
+				--targetname:Show()
+				--targetname:SetText(TALENT_SPEC_PET_PRIMARY)
+        targetname:Hide()
 			elseif template.talentGroup then
 				targetname:Show()
 				if template.talentGroup == GetActiveTalentGroup() and target then
@@ -1598,7 +1610,7 @@ do
 	local ipairs = ipairs
 
 	function Talented:IsTemplateAtCap(template)
-		local max = RAID_CLASS_COLORS[template.class] and 51 or 99
+		local max = RAID_CLASS_COLORS[template.class] and 51 or 30
 		return self.db.profile.level_cap and self:GetPointCount(template) >= max
 	end
 
