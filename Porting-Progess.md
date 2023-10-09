@@ -1,3 +1,8 @@
+### 9 October 2023, 6pm EST
+Took some refactoring and hair pulling, but I finally think I got templates for pets working without breaking any of the other templates.  **MAKE SURE YOU DELETE YOUR OLD TALENTED SAVED VARIABLES IF YOU HAVE ISSUES**...old templates that are stored there may cause problems with the new code.  Pet Templates may show errors in your chat if you try to apply them and don't meet level requirements for the rank(s) you're attempting to apply.
+
+Next step will be making sure inspection is working, and then on to getting import/exports working.
+
 ### 28 September 2023, 3:30PM EST
 So I fixed the pet tree error from last night.  Silly me forgetting Lua tables are objects and setting a new table equal to the master table (like a normal variable) creates a reference and not a copy/clone of the table.  Fixed that, and now the Pet Trees seem to be working perfectly and changing/updating correctly.  Still not sure how they'll act to non-English localizations (test and tell me please!).  And I haven't tested each pet family yet.  I'm also not sure on the total number of pet points available at 60, or how the math is done for earning pet points, so that code will need adjusted as I get it.
 

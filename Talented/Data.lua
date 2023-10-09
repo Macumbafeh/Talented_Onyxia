@@ -8,115 +8,127 @@ local Talented = _G.Talented
 do
   local AllPets = {
     [1] = { --Great Stamina
-      column = 1,
-      row = 1,
+      serverIndex = 1,
+      column = 1, row = 1,
       ranks = {
         [1] = 4188, [2] = 4189, [3] = 4190, [4] = 4191, [5] = 4192,
         [6] = 4193, [7] = 4194, [8] = 5041, [9] = 5042},
       },
     [4] = { --Natural Armor
-      column = 1,
-      row = 2,
+      serverIndex = 4,
+      column = 1, row = 2,
       ranks = {
         [1] = 24549, [2] = 24550, [3] = 24551, [4] = 24552, [5] = 24553,
         [6] = 24554, [7] = 24555, [8] = 24629, [9] = 24630},
       },
     [5] = { --Cower
-      column = 3,
-      row = 2,
+      serverIndex = 5,
+      column = 3, row = 2,
       ranks = {
         [1] = 1742, [2] = 1753, [3] = 1754, [4] = 1755, [5] = 1756, [6] = 16697},
       },
     [7] = { --Arcane Resistance
-      column = 4,
-      row = 3,
+      serverIndex = 7,
+      column = 4, row = 3,
       ranks = {
         [1] = 24493, [2] = 24497, [3] = 24500, [4] = 24501},
       },
     [8] = { --Fire Resistance
-      column = 1,
-      row = 3,
+      serverIndex = 8,
+      column = 1, row = 3,
       ranks = {
         [1] = 23992, [2] = 24439, [3] = 24444, [4] = 24445},
       },
     [9] = { --Frost Resistance
-      column = 2,
-      row = 3,
+      serverIndex = 9,
+      column = 2, row = 3,
       ranks = {
         [1] = 24446, [2] = 24447, [3] = 24448, [4] = 24449},
       },
     [10] = { --Nature Resistance
-      column = 3,
-      row = 3,
+      serverIndex = 10,
+      column = 3, row = 3,
       ranks = {
         [1] = 24492, [2] = 24502, [3] = 24503, [4] = 24504},
       },
     [11] = { --Shadow Resistance
-      column = 1,
-      row = 4,
+      serverIndex = 11,
+      column = 1, row = 4,
       ranks = {
         [1] = 24488, [2] = 24505, [3] = 24507, [4] = 24506},
       },
     }
   local FamilySkills = {
     [2] = { --Bite
+      serverIndex = 2,
       column = 2, row = 1,
       ranks = {
         [1] = 17253, [2] = 17255, [3] = 17256, [4] = 17257,
         [5] = 17258, [6] = 17259, [7] = 17260, [8] = 17261},
       },
     [3] = { --Claw
+      serverIndex = 3,
       column = 3, row = 1,
       ranks = {
         [1] = 16827, [2] = 16828, [3] = 16829, [4] = 16830,
         [5] = 16831, [6] = 16832, [7] = 3010,  [8] = 3009},
       },
     [6] = { --Dash
+      serverIndex = 6,
       column = 4, row = 2,
       ranks = {
         [1] = 23099, [2] = 23109, [3] = 23110},
       },
     [12] = { --Dive
+      serverIndex = 12,
       column = 2, row = 2,
       ranks = {
         [1] = 23145, [2] = 23147, [3] = 23148},
       },
     [13] = { --Screech
+      serverIndex = 13,
       column = 4, row = 1,
       ranks = {
         [1] = 24423, [2] = 24577, [3] = 24578, [4] = 24579},
       },
     [14] = { --Charge
+      serverIndex = 14,
       column = 4, row = 1,
       ranks = {
         [1] = 7371, [2] = 26177, [3] = 26178, [4] = 26179, [5] = 26201, [6] = 27685},
       },
     [15] = { --Prowl
+      serverIndex = 15,
       column = 4, row = 1,
       ranks = {
         [1] = 24450, [2] = 24452, [3] = 24453},
       },
     [16] = { --Thunderstomp
+      serverIndex = 16,
       column = 4, row = 1,
       ranks = {
         [1] = 26090, [2] = 26187, [3] = 26188},
       },
     [17] = { --Scorpid Poison
+      serverIndex = 17,
       column = 4, row = 1,
       ranks = {
         [1] = 24640, [2] = 24583, [3] = 24586, [4] = 24587},
       },
     [18] = { --Shell Shield
+      serverIndex = 18,
       column = 4, row = 1,
       ranks = {
         [1] = 26064},
       },
     [19] = { --Lightning Breath
+      serverIndex = 19,
       column = 4, row = 1,
       ranks = {
         [1] = 24844, [2] = 25008, [3] = 25009, [4] = 25010, [5] = 25011, [6] = 25012},
       },
     [20] = { --Furious Howl
+      serverIndex = 20,
       column = 4, row = 1,
       ranks = {
         [1] = 24604, [2] = 24605, [3] = 24603, [4] = 24597},
@@ -389,47 +401,71 @@ do
     --Ferocity = "61682;61683,61684,*23145,61686;61687;61688,61689;61690,53180;53181,53186;53187,53182;53183;53184,19596,61680;61681;52858,!53409;53411,61685,*52825,!g55709,53203;53204;53205,53427;53429;53430,53401,d53426,d53434,%62759;62760,!b62758;62762",
 	}
   
-  spelldata.Bat[1][2] = FamilySkills[2]
-  spelldata.Bat[1][12] = FamilySkills[12]
-  spelldata.Bat[1][13] = FamilySkills[13]
-  spelldata.Bear[1][2] = FamilySkills[2]
-  spelldata.Bear[1][3] = FamilySkills[3]
-  spelldata.Boar[1][2] = FamilySkills[2]
-  spelldata.Boar[1][6] = FamilySkills[6]
-  spelldata.Boar[1][14] = FamilySkills[14]
-  spelldata.Cat[1][2] = FamilySkills[2]
-  spelldata.Cat[1][3] = FamilySkills[3]
-  spelldata.Cat[1][6] = FamilySkills[6]
-  spelldata.Cat[1][15] = FamilySkills[15]
-  spelldata.Crab[1][3] = FamilySkills[3]
-  spelldata.Crocolisk[1][2] = FamilySkills[2]
-  spelldata.Gorilla[1][2] = FamilySkills[2]
-  spelldata.Gorilla[1][16] = FamilySkills[16]
-  spelldata.Hyena[1][2] = FamilySkills[2]
-  spelldata.Hyena[1][6] = FamilySkills[6]
-  spelldata.Raptor[1][2] = FamilySkills[2]
-  spelldata.Raptor[1][3] = FamilySkills[3]
-  spelldata.Scorpid[1][3] = FamilySkills[3]
-  spelldata.Scorpid[1][17] = FamilySkills[17]
-  spelldata.Spider[1][2] = FamilySkills[2]
-  spelldata.Tallstrider[1][2] = FamilySkills[2]
-  spelldata.Tallstrider[1][6] = FamilySkills[6]
-  spelldata.Turtle[1][2] = FamilySkills[2]
-  spelldata.Turtle[1][18] = FamilySkills[18]
-  spelldata.Wolf[1][2] = FamilySkills[2]
-  spelldata.Wolf[1][6] = FamilySkills[6]
-  spelldata.Wolf[1][20] = FamilySkills[20]
-  spelldata["Bird of Prey"][1][3] = FamilySkills[3]
-  spelldata["Bird of Prey"][1][12] = FamilySkills[12]
-  spelldata["Bird of Prey"][1][13] = FamilySkills[13]
-  spelldata["Carrion Bird"][1][2] = FamilySkills[2]
-  spelldata["Carrion Bird"][1][3] = FamilySkills[3]
-  spelldata["Carrion Bird"][1][12] = FamilySkills[12]
-  spelldata["Carrion Bird"][1][13] = FamilySkills[13]
-  spelldata["Wind Serpent"][1][2] = FamilySkills[2]
-  spelldata["Wind Serpent"][1][12] = FamilySkills[12]
-  spelldata["Wind Serpent"][1][19] = FamilySkills[19]
-
+  spelldata.Bat[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Bat[1][12] = deep_copy(FamilySkills[12])
+  spelldata.Bat[1][13] = deep_copy(FamilySkills[13])
+  spelldata.Bear[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Bear[1][3] = deep_copy(FamilySkills[3])
+  spelldata.Boar[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Boar[1][6] = deep_copy(FamilySkills[6])
+  spelldata.Boar[1][14] = deep_copy(FamilySkills[14])
+  spelldata.Cat[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Cat[1][3] = deep_copy(FamilySkills[3])
+  spelldata.Cat[1][6] = deep_copy(FamilySkills[6])
+  spelldata.Cat[1][15] = deep_copy(FamilySkills[15])
+  spelldata.Crab[1][3] = deep_copy(FamilySkills[3])
+  spelldata.Crocolisk[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Gorilla[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Gorilla[1][16] = deep_copy(FamilySkills[16])
+  spelldata.Hyena[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Hyena[1][6] = deep_copy(FamilySkills[6])
+  spelldata.Raptor[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Raptor[1][3] = deep_copy(FamilySkills[3])
+  spelldata.Scorpid[1][3] = deep_copy(FamilySkills[3])
+  spelldata.Scorpid[1][17] = deep_copy(FamilySkills[17])
+  spelldata.Spider[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Tallstrider[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Tallstrider[1][6] = deep_copy(FamilySkills[6])
+  spelldata.Turtle[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Turtle[1][18] = deep_copy(FamilySkills[18])
+  spelldata.Wolf[1][2] = deep_copy(FamilySkills[2])
+  spelldata.Wolf[1][6] = deep_copy(FamilySkills[6])
+  spelldata.Wolf[1][20] = deep_copy(FamilySkills[20])
+  spelldata["Bird of Prey"][1][3] = deep_copy(FamilySkills[3])
+  spelldata["Bird of Prey"][1][12] = deep_copy(FamilySkills[12])
+  spelldata["Bird of Prey"][1][13] = deep_copy(FamilySkills[13])
+  spelldata["Carrion Bird"][1][2] = deep_copy(FamilySkills[2])
+  spelldata["Carrion Bird"][1][3] = deep_copy(FamilySkills[3])
+  spelldata["Carrion Bird"][1][12] = deep_copy(FamilySkills[12])
+  spelldata["Carrion Bird"][1][13] = deep_copy(FamilySkills[13])
+  spelldata["Wind Serpent"][1][2] = deep_copy(FamilySkills[2])
+  spelldata["Wind Serpent"][1][12] = deep_copy(FamilySkills[12])
+  spelldata["Wind Serpent"][1][19] = deep_copy(FamilySkills[19])
+  
+  local function indexSort(k1, k2)
+    if k1 and k2 then
+      return k1.serverIndex < k2.serverIndex
+    end
+  end
+  
+  for class, data in pairs(spelldata) do
+    if type(data) == "table" then
+      table.sort(spelldata[class][1], indexSort)
+      if table.maxn(spelldata[class][1]) ~= #spelldata[class][1] then
+        for i = 1, table.maxn(spelldata[class][1]) do
+          if not spelldata[class][1][i] then
+            spelldata[class][1][i] = "null"
+          end
+        end
+        for i = #spelldata[class][1], 1, -1 do
+          if spelldata[class][1][i] == "null" then
+            table.remove(spelldata[class][1], i)
+          end
+        end
+      end
+    end
+  end
+ 
 	Talented.spelldata = spelldata
 end
 

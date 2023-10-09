@@ -349,7 +349,7 @@ do
 		local db = self.db.global.templates
 		local invalid = {}
 		for name, code in pairs(db) do
-			if type(code) == "string" then
+      if type(code) == "string" then
 				local class = self:GetTemplateStringClass(code)
 				if class then
 					db[name] = {
@@ -785,6 +785,23 @@ do
 		"SHAMAN",
 		"WARLOCK",
 		"WARRIOR",
+    "Bat",
+    "Bear",
+    "Boar",
+    "Cat",
+    "Crab",
+    "Crocolisk",
+    "Gorilla",
+    "Hyena",
+    "Raptor",
+    "Scorpid",
+    "Spider",
+    "Tallstrider",
+    "Turtle",
+    "Wolf",
+    "Bird of Prey",
+    "Carrion Bird",
+    "Wind Serpent",
 		--"DEATHKNIGHT",
 		--"Ferocity",
 		--"Cunning",
@@ -794,7 +811,8 @@ do
 	function Talented:GetTemplateStringClass(code, nmap)
 		nmap = nmap or talented_map
 		if code:len() <= 0 then return end
-		local index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1
+		--local index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1
+    local index = nmap:find(code:sub(1, 1), nil, true)
 		if not index or index > #classmap then return end
 		return classmap[index]
 	end
@@ -815,7 +833,8 @@ do
 	local function GetTemplateStringInfo(code)
 		if code:len() <= 0 then return end
 
-		local index = modf((talented_map:find(code:sub(1, 1), nil, true) - 1) / 3) + 1
+		--local index = modf((talented_map:find(code:sub(1, 1), nil, true) - 1) / 3) + 1
+    local index = talented_map:find(code:sub(1, 1), nil, true)
 		if not index or index > #classmap then return end
 		local class = classmap[index]
 		local talents = Talented:UncompressSpellData(class)
@@ -915,7 +934,8 @@ do
 		nmap = nmap or talented_map
 		if code:len() <= 0 then return end
 
-		local index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1
+		--local index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1
+    local index = nmap:find(code:sub(1, 1), nil, true)
 		assert(index and index <= #classmap, "Unknown class code")
 
 		local class = classmap[index]
@@ -1002,7 +1022,8 @@ do
 		do
 			for index, c in ipairs(classmap) do
 				if c == class then
-					local i = (index - 1) * 3 + 1
+					--local i = (index - 1) * 3 + 1
+          local i = index
 					ccode = nmap:sub(i, i)
 					break
 				end
@@ -1029,7 +1050,6 @@ do
 			end
 		end
 		local output = ccode .. rtrim(code, stop)
-
 		return output
 	end
 
@@ -1218,7 +1238,7 @@ do
       size_y = 4 * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
       bottom_offset = (bottom_offset / 2) + LAYOUT_BASE_Y
     end
-		for tab, tree in pairs(talents) do
+		for tab, tree in ipairs(talents) do
 			local frame = Talented:MakeTalentFrame(self.frame, LAYOUT_SIZE_X, size_y)
 			frame.tab = tab
 			frame.view = self
@@ -1232,7 +1252,7 @@ do
 
 			self:SetUIElement(frame, tab)
 
-			for index, talent in pairs(tree) do
+			for index, talent in ipairs(tree) do
 				if not talent.inactive then
 					local button = Talented:MakeButton(frame)
 					button.id = index
@@ -1321,9 +1341,9 @@ do
 		local total = 0
 		local info = Talented:UncompressSpellData(template.class)
 		local at_cap = Talented:IsTemplateAtCap(template)
-		for tab, tree in pairs(info) do
+		for tab, tree in ipairs(info) do
 			local count = 0
-			for index, talent in pairs(tree) do
+			for index, talent in ipairs(tree) do
 				if not talent.inactive then
 					local rank = template[tab][index]
 					count = count + rank
@@ -1392,7 +1412,8 @@ do
 			local frame = self:GetUIElement(tab)
 			frame.name:SetFormattedText(L["%s (%d)"], Talented.tabdata[template.class][tab].name, count)
       if frame.pet then
-        frame.name:SetPoint("TOP", 0, 42)
+        frame.name:SetPoint("TOP", 0, 24)
+        --frame.editname:SetPoint("TOP", 0, 24)
       else
         frame.name:SetPoint("TOP", 0, -4)
       end
@@ -1707,7 +1728,7 @@ do
 		end
 		return true
 	end
-
+  
 	function Talented:ValidateTemplate(template, fix)
 		local class = template.class
 		if not class then return end
@@ -1721,7 +1742,7 @@ do
 				return
 			end
 			local count = 0
-			for i, talent in pairs(tree) do
+			for i, talent in ipairs(tree) do
 				local value = t[i]
 				if not value then
 					return
@@ -1789,9 +1810,14 @@ do
 	function Talented:LearnTalent(template, tab, index)
 		local is_pet = not RAID_CLASS_COLORS[template.class]
 		local p = self.db.profile
+    local serverIndex
+    if is_pet then
+      local info = self:UncompressSpellData(template.class)
+      serverIndex = info[tab][index].serverIndex
+    end
 
 		if not p.confirmlearn then
-			LearnTalent(tab, index, is_pet)
+			LearnTalent(tab, serverIndex or index, is_pet)
 			return
 		end
 
@@ -1806,7 +1832,7 @@ do
 			end
 		end
 
-		ShowDialog(L['Are you sure that you want to learn "%s (%d/%d)" ?']:format(self:GetTalentName(template.class, tab, index), template[tab][index] + 1, self:GetTalentRanks(template.class, tab, index)), tab, index, is_pet)
+		ShowDialog(L['Are you sure that you want to learn "%s (%d/%d)" ?']:format(self:GetTalentName(template.class, tab, index), template[tab][index] + 1, self:GetTalentRanks(template.class, tab, index)), tab, serverIndex or index, is_pet)
 	end
 end
 
@@ -2105,11 +2131,15 @@ do
 			for tab, tree in ipairs(self:UncompressSpellData(template.class)) do
 				local ttab = template[tab]
 				for index = 1, #tree do
-					local rank = select(9, GetTalentInfo(tab, index, nil, pet, group))
+          local serverIndex
+          if pet then
+            serverIndex = tree[index].serverIndex
+          end
+					local rank = select(9, GetTalentInfo(tab, serverIndex or index, nil, pet, group))
 					local delta = ttab[index] - rank
 					if delta > 0 then
-						AddPreviewTalentPoints(tab, index, delta, pet, group)
-						local nrank = select(9, GetTalentInfo(tab, index, nil, pet, group))
+						AddPreviewTalentPoints(tab, serverIndex or index, delta, pet, group)
+						local nrank = select(9, GetTalentInfo(tab, serverIndex or index, nil, pet, group))
 						if nrank < ttab[index] then
 							missing = true
 						elseif nrank > rank then
@@ -2142,7 +2172,11 @@ do
 		for tab, tree in ipairs(self:UncompressSpellData(template.class)) do
 			local ttab = template[tab]
 			for index = 1, #tree do
-				local delta = ttab[index] - select(5, GetTalentInfo(tab, index, nil, pet, group))
+        local serverIndex
+        if pet then
+          serverIndex = tree[index].serverIndex
+        end
+				local delta = ttab[index] - select(5, GetTalentInfo(tab, serverIndex or index, nil, pet, group))
 				if delta > 0 then
 					failed = true
 					break
@@ -2352,14 +2386,14 @@ do
 		template.talentGroup = talentGroup
 		template.class = class
 		local info = self:UncompressSpellData(class)
-		for tab, tree in pairs(info) do
+		for tab, tree in ipairs(info) do
 			local ttab = template[tab]
 			if not ttab then
 				ttab = {}
 				template[tab] = ttab
 			end
-			for index in pairs(tree) do
-				ttab[index] = select(5, GetTalentInfo(tab, index, nil, true, talentGroup))
+			for index in ipairs(tree) do
+				ttab[index] = select(5, GetTalentInfo(tab, tree[index].serverIndex or index, nil, true, talentGroup))
 			end
 		end
 		for _, view in self:IterateTalentViews(template) do
@@ -2386,13 +2420,12 @@ do
 	function Talented:FixAlternatesTalents(class)
 		local talentGroup = GetActiveTalentGroup(nil, true)
 		local data = self:UncompressSpellData(class)[1]
-		--[[ Original Code
     for index = 1, #data - 1 do
 			local info = data[index]
 			local ninfo = data[index + 1]
 			if info.row == ninfo.row and info.column == ninfo.column then
-				local talent = GetTalentInfo(1, index, nil, true, talentGroup)
-				local ntalent = GetTalentInfo(1, index + 1, nil, true, talentGroup)
+				local talent = GetTalentInfo(1, data[index].serverIndex or index, nil, true, talentGroup)
+				local ntalent = GetTalentInfo(1, data[index + 1].serverIndex or index + 1, nil, true, talentGroup)
 				if talent then
 					assert(not ntalent)
 					info.inactive = nil
@@ -2415,8 +2448,9 @@ do
 					end
 				end
 			end
-		end--]]
-    for index in pairs(data) do
+		end
+    --[[ This was to fix Pet Talents 
+    for index in ipairs(data) do
     	local talent = GetTalentInfo(1, index, nil, true, talentGroup)
       for _, template in pairs(self.db.global.templates) do
         if template.class == class and not template.code then
@@ -2428,7 +2462,7 @@ do
           end
         end
       end
-    end
+    end --]]
 		for _, view in self:IterateTalentViews() do
 			if view.class == class then
 				view:SetClass(view.class, true)
