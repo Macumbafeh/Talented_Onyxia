@@ -247,7 +247,7 @@ do
 			self.db.profile.last_template = template.name
 		end
 		self:SetMode(self:GetDefaultMode())
-		-- self:UpdateView()
+		-- self:UpdateView()  --Kader had this commented
 	end
 
 	function Talented:GetDefaultMode()
@@ -256,14 +256,14 @@ do
 
 	function Talented:OnEnable()
 		self:RawHook("ToggleTalentFrame", true)
-		--self:RawHook("ToggleGlyphFrame", true)
+		--self:RawHook("ToggleGlyphFrame", true) --Wrath code
 		self:SecureHook("UpdateMicroButtons")
 		self:CheckHookInspectUI()
 
 		self:RegisterEvent("PLAYER_ENTERING_WORLD")
-		--UIParent:UnregisterEvent("USE_GLYPH")
+		--UIParent:UnregisterEvent("USE_GLYPH") --Wrath code
 		UIParent:UnregisterEvent("CONFIRM_TALENT_WIPE")
-		--self:RegisterEvent("USE_GLYPH")
+		--self:RegisterEvent("USE_GLYPH") --Wrath code
 		self:RegisterEvent("CONFIRM_TALENT_WIPE")
 		self:RegisterEvent("CHARACTER_POINTS_CHANGED")
 		self:RegisterEvent("PLAYER_TALENT_UPDATE")
@@ -272,7 +272,7 @@ do
 
 	function Talented:OnDisable()
 		self:UnhookInspectUI()
-		--UIParent:RegisterEvent("USE_GLYPH")
+		--UIParent:RegisterEvent("USE_GLYPH")  --Wrath code
 		UIParent:RegisterEvent("CONFIRM_TALENT_WIPE")
 	end
 
@@ -282,7 +282,8 @@ do
 			-- spec tabs
 			E.callbacks:Fire("Talented_SpecTabs")
 
-			--[[-- glyph frame
+			--[[ Wrath code
+      -- glyph frame
 			self:CreateGlyphFrame()
 			E.callbacks:Fire("Talented_GlyphFrame")--]]
 		end
@@ -811,7 +812,7 @@ do
 	function Talented:GetTemplateStringClass(code, nmap)
 		nmap = nmap or talented_map
 		if code:len() <= 0 then return end
-		--local index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1
+		--local index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1  --the way WoWHead used to encode classes
     local index = nmap:find(code:sub(1, 1), nil, true)
 		if not index or index > #classmap then return end
 		return classmap[index]
@@ -833,7 +834,7 @@ do
 	local function GetTemplateStringInfo(code)
 		if code:len() <= 0 then return end
 
-		--local index = modf((talented_map:find(code:sub(1, 1), nil, true) - 1) / 3) + 1
+		--local index = modf((talented_map:find(code:sub(1, 1), nil, true) - 1) / 3) + 1  --the way WoWHead used to encode classes
     local index = talented_map:find(code:sub(1, 1), nil, true)
 		if not index or index > #classmap then return end
 		local class = classmap[index]
@@ -934,7 +935,7 @@ do
 		nmap = nmap or talented_map
 		if code:len() <= 0 then return end
 
-		--local index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1
+		--local index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1 --the way WoWHead used to encode classes
     local index = nmap:find(code:sub(1, 1), nil, true)
 		assert(index and index <= #classmap, "Unknown class code")
 
@@ -1022,7 +1023,7 @@ do
 		do
 			for index, c in ipairs(classmap) do
 				if c == class then
-					--local i = (index - 1) * 3 + 1
+					--local i = (index - 1) * 3 + 1  --the way WoWHead used to encode classes
           local i = index
 					ccode = nmap:sub(i, i)
 					break
@@ -1320,7 +1321,8 @@ do
 			return total == 0 and 1 or total + 9
 		else
       return total == 0 and 1 or total * 2
-			--[[if total == 0 then
+			--[[ Original/Wrath code
+      if total == 0 then
 				return 10
 			end
 			if total > 16 then
@@ -2449,20 +2451,7 @@ do
 				end
 			end
 		end
-    --[[ This was to fix Pet Talents 
-    for index in ipairs(data) do
-    	local talent = GetTalentInfo(1, index, nil, true, talentGroup)
-      for _, template in pairs(self.db.global.templates) do
-        if template.class == class and not template.code then
-          local value = template[1][index]
-          if talent then
-            template[1][index] = value
-          else
-            template[1][index] = nil
-          end
-        end
-      end
-    end --]]
+    
 		for _, view in self:IterateTalentViews() do
 			if view.class == class then
 				view:SetClass(view.class, true)

@@ -1,3 +1,8 @@
+### 10 October 2023, 9pm EST
+Inspections worked without needing any fixes.  I commented out all the imports/exports from Kader's version (Wrath trees) since they won't work in Vanilla or TBC phases (but aren't deleted for when I start working on making the addon automatically update to work in Wrath Era).
+
+Added a WoWHead importer/exporter that works for Vanilla trees, and shouldn't need any changes when TBC/Wrath comes around.  If there are any other (good) sites that implement Vanilla or TBC talent calculators, put them in an issue on the GitHub so I can work on getting them coded in.
+
 ### 9 October 2023, 6pm EST
 Took some refactoring and hair pulling, but I finally think I got templates for pets working without breaking any of the other templates.  **MAKE SURE YOU DELETE YOUR OLD TALENTED SAVED VARIABLES IF YOU HAVE ISSUES**...old templates that are stored there may cause problems with the new code.  Pet Templates may show errors in your chat if you try to apply them and don't meet level requirements for the rank(s) you're attempting to apply.
 

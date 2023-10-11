@@ -46,6 +46,7 @@ end
 -- WoTLKDB
 --
 
+--[[
 Talented.exporters["WoTLKDB"] = function(self, template)
 	if not RAID_CLASS_COLORS[template.class] then
 		return self:ExportWhpetTemplate(template, "https://www.wotlkdb.com/?petcalc#%s")
@@ -125,4 +126,87 @@ Talented.exporters["Altervista"] = function(self, template)
 		end
 	end
 	return ("http://rpgworld.altervista.org/335/%s.php?%s"):format(template.class:lower(), table.concat(s))
+end--]]
+
+-------------------------------------------------------------------------------
+-- WoWHead
+--
+-- .*/(.*)/talent-calc/(\w+)/((?:\-?\d+)+)
+
+Talented.importers[".*/talent%-calc/"] = function(self, url, dst)
+	local s, class, code = url:match(".*/(.*)/talent%-calc/(%a+)/(.+)")
+  if s ~= "classic" then return end  --not a Vanilla Tree ("wotlk" or "tbc" for those eras)
+	if not class or not code then return end
+  
+  class = string.upper(class)
+  if not RAID_CLASS_COLORS[class] then return end
+  if code:len() <= 0 then return end
+
+  template = dst or {}
+  template.class = class
+
+  local talents = self:UncompressSpellData(class)
+  assert(talents)
+
+  local tab = 1
+  local t = wipe(template[tab] or {})
+  template[tab] = t
+
+  for i = 1, code:len() do
+    local char = code:sub(i, i)
+    if char == "-" then
+      if #t > #talents[tab] then
+        tab = tab + 1
+        t = wipe(template[tab] or {})
+        template[tab] = t
+      end
+      tab = tab + 1
+      t = wipe(template[tab] or {})
+      template[tab] = t
+    else
+      if #t > #talents[tab] then
+        tab = tab + 1
+        t = wipe(template[tab] or {})
+        template[tab] = t
+      end
+      t[#t + 1] = tonumber(char)
+    end
+  end
+
+  assert(#template <= #talents, "Too many branches")
+  do
+    for tb, tree in ipairs(talents) do
+      local _t = template[tb] or {}
+      template[tb] = _t
+      for i = 1, #tree do
+        _t[i] = _t[i] or 0
+      end
+    end
+  end
+
+	return dst
+end
+
+Talented.exporters["WoWHead"] = function(self, template)
+	if not RAID_CLASS_COLORS[template.class] then
+		return --self:ExportWhpetTemplate(template)
+	end
+  
+  local url = "https://www.wowhead.com/classic/talent-calc/"
+  url = url .. string.lower(template.class) .. "/"
+  
+  local code = ""
+  for tab, tree in ipairs(template) do
+    for _, ranks in ipairs(tree) do
+      code = code .. tostring(ranks)
+    end
+    code = string.gsub(code, "0*$", "")
+    if tab ~= #template then
+      code = code .. "-"
+    end
+  end
+  code = string.gsub(code, "-*$", "")
+  
+  local url = url .. code  
+	return url
 end
