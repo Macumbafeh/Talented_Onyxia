@@ -256,24 +256,30 @@ do
 
 	function Talented:OnEnable()
 		self:RawHook("ToggleTalentFrame", true)
-		--self:RawHook("ToggleGlyphFrame", true) --Wrath code
 		self:SecureHook("UpdateMicroButtons")
 		self:CheckHookInspectUI()
 
 		self:RegisterEvent("PLAYER_ENTERING_WORLD")
-		--UIParent:UnregisterEvent("USE_GLYPH") --Wrath code
 		UIParent:UnregisterEvent("CONFIRM_TALENT_WIPE")
-		--self:RegisterEvent("USE_GLYPH") --Wrath code
 		self:RegisterEvent("CONFIRM_TALENT_WIPE")
 		self:RegisterEvent("CHARACTER_POINTS_CHANGED")
 		self:RegisterEvent("PLAYER_TALENT_UPDATE")
 		TalentMicroButton:SetScript("OnClick", ToggleTalentFrame)
+    if GetExpansionLevel() == 2 then
+      self:RawHook("ToggleGlyphFrame", true) --Wrath code
+
+      UIParent:UnregisterEvent("USE_GLYPH") --Wrath code
+      self:RegisterEvent("USE_GLYPH") --Wrath code
+    end
 	end
 
 	function Talented:OnDisable()
 		self:UnhookInspectUI()
-		--UIParent:RegisterEvent("USE_GLYPH")  --Wrath code
 		UIParent:RegisterEvent("CONFIRM_TALENT_WIPE")
+    
+    if GetExpansionLevel() == 2 then
+      UIParent:RegisterEvent("USE_GLYPH")  --Wrath code
+    end
 	end
 
 	function Talented:PLAYER_ENTERING_WORLD()
@@ -282,10 +288,11 @@ do
 			-- spec tabs
 			E.callbacks:Fire("Talented_SpecTabs")
 
-			--[[ Wrath code
-      -- glyph frame
-			self:CreateGlyphFrame()
-			E.callbacks:Fire("Talented_GlyphFrame")--]]
+			if GetExpansionLevel() == 2 then
+        -- glyph frame
+        self:CreateGlyphFrame()
+        E.callbacks:Fire("Talented_GlyphFrame")
+      end
 		end
 	end
 
@@ -774,9 +781,11 @@ end
 do
 	local assert, ipairs, modf, fmod = assert, ipairs, math.modf, math.fmod
 
+  local expac = GetExpansionLevel()
 	local stop = "Z"
 	local talented_map = "012345abcdefABCDEFmnopqrMNOPQRtuvwxy*"
-	local classmap = {
+	local classmap = { 
+  [0] = { --vanilla
 		"DRUID",
 		"HUNTER",
 		"MAGE",
@@ -803,17 +812,44 @@ do
     "Bird of Prey",
     "Carrion Bird",
     "Wind Serpent",
-		--"DEATHKNIGHT",
-		--"Ferocity",
-		--"Cunning",
-		--"Tenacity"
-	}
+    },
+  [1] = { --tbc
+  
+    },
+  [2] = { --wrath
+		"DRUID",
+		"HUNTER",
+		"MAGE",
+		"PALADIN",
+		"PRIEST",
+		"ROGUE",
+		"SHAMAN",
+		"WARLOCK",
+		"WARRIOR",
+		"DEATHKNIGHT",
+		"Ferocity",
+		"Cunning",
+		"Tenacity",
+    },
+  }
+  classmap = classmap[expac]
 
 	function Talented:GetTemplateStringClass(code, nmap)
+    if code:len() <= 0 then return end
+
+    local internal, index
+    if type(nmap) == "boolean" or not nmap then
+      internal = true
+      nmap = nil
+    end
 		nmap = nmap or talented_map
-		if code:len() <= 0 then return end
-		--local index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1  --the way WoWHead used to encode classes
-    local index = nmap:find(code:sub(1, 1), nil, true)
+    
+    if expac == 2 or not internal then
+    --the way WoWHead used to encode classes
+      index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1  
+    else
+      index = nmap:find(code:sub(1, 1), nil, true)
+    end
 		if not index or index > #classmap then return end
 		return classmap[index]
 	end
@@ -833,38 +869,54 @@ do
 	local temp_tabcount = {}
 	local function GetTemplateStringInfo(code)
 		if code:len() <= 0 then return end
-
-		--local index = modf((talented_map:find(code:sub(1, 1), nil, true) - 1) / 3) + 1  --the way WoWHead used to encode classes
-    local index = talented_map:find(code:sub(1, 1), nil, true)
+    local index
+    if expac == 2 then
+      --the way WoWHead used to encode classes
+		  index = modf((talented_map:find(code:sub(1, 1), nil, true) - 1) / 3) + 1  
+    else
+      index = talented_map:find(code:sub(1, 1), nil, true)
+    end
 		if not index or index > #classmap then return end
 		local class = classmap[index]
+
 		local talents = Talented:UncompressSpellData(class)
 		local tabs, count, t = 1, 0, 0
 		for i = 2, code:len() do
 			local char = code:sub(i, i)
-			if char == stop then
-				if t >= #talents[tabs] then
-					temp_tabcount[tabs] = count
-					tabs = tabs + 1
-					count, t = 0, 0
-				end
-				temp_tabcount[tabs] = count
-				tabs = tabs + 1
-				count, t = 0, 0
+			if expac == 2 and char == stop then
+        if t >= #talents[tabs] then
+          temp_tabcount[tabs] = count
+          tabs = tabs + 1
+          count, t = 0, 0
+        end
+        temp_tabcount[tabs] = count
+        tabs = tabs + 1
+        count, t = 0, 0
 			else
-				index = talented_map:find(char, nil, true) - 1
-				if not index then
-					return
-				end
-				local b = fmod(index, 6)
-				local a = (index - b) / 6
-				if t >= #talents[tabs] then
-					temp_tabcount[tabs] = count
-					tabs = tabs + 1
-					count, t = 0, 0
-				end
-				t = t + 2
-				count = count + a + b
+        local a,b = 0, 0
+        if expac == 2 then
+          index = talented_map:find(char, nil, true) - 1
+          if not index then
+            return
+          end
+          local b = fmod(index, 6)
+          local a = (index - b) / 6
+          if t >= #talents[tabs] then
+            temp_tabcount[tabs] = count
+            tabs = tabs + 1
+            count, t = 0, 0
+          end
+          t = t + 2
+        else
+          a = tonumber(char, 16)
+          if t >= #talents[tabs] then
+            temp_tabcount[tabs] = count
+            tabs = tabs + 1
+            count, t = 0, 0
+          end
+          t = t + 1
+        end
+        count = count + a + b
 			end
 		end
 		if count > 0 then
@@ -932,11 +984,20 @@ do
 	end
 
 	function Talented:StringToTemplate(code, template, nmap)
+    local internal, index
+    if type(nmap) == "boolean" or not nmap then 
+      internal = true
+      nmap = nil
+    end
 		nmap = nmap or talented_map
 		if code:len() <= 0 then return end
 
-		--local index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1 --the way WoWHead used to encode classes
-    local index = nmap:find(code:sub(1, 1), nil, true)
+    if expac == 2 or not internal then
+      --the way WoWHead used to encode classes
+      index = modf((nmap:find(code:sub(1, 1), nil, true) - 1) / 3) + 1 
+    else
+      index = nmap:find(code:sub(1, 1), nil, true)
+    end
 		assert(index and index <= #classmap, "Unknown class code")
 
 		local class = classmap[index]
@@ -952,7 +1013,7 @@ do
 
 		for i = 2, code:len() do
 			local char = code:sub(i, i)
-			if char == stop then
+			if expac == 2 and char == stop then
 				if #t >= #talents[tab] then
 					tab = tab + 1
 					t = wipe(template[tab] or {})
@@ -962,25 +1023,34 @@ do
 				t = wipe(template[tab] or {})
 				template[tab] = t
 			else
-				index = nmap:find(char, nil, true) - 1
-				if not index then
-					return
-				end
-				local b = fmod(index, 6)
-				local a = (index - b) / 6
+        if expac == 2 then
+          index = nmap:find(char, nil, true) - 1
+          if not index then
+            return
+          end
 
-				if #t >= #talents[tab] then
-					tab = tab + 1
-					t = wipe(template[tab] or {})
-					template[tab] = t
-				end
-				t[#t + 1] = a
+          local b = fmod(index, 6)
+          local a = (index - b) / 6
+          if #t >= #talents[tab] then
+            tab = tab + 1
+            t = wipe(template[tab] or {})
+            template[tab] = t
+          end
+          t[#t + 1] = a
 
-				if #t < #talents[tab] then
-					t[#t + 1] = b
-				else
-					assert(b == 0)
-				end
+          if #t < #talents[tab] then
+            t[#t + 1] = b
+          else
+            assert(b == 0)
+          end
+        else
+          if #t >= #talents[tab] then
+            tab = tab + 1
+            t = wipe(template[tab] or {})
+            template[tab] = t
+          end
+          t[#t + 1] = tonumber(char, 16)
+        end
 			end
 		end
 
@@ -1015,6 +1085,11 @@ do
 	end
 
 	function Talented:TemplateToString(template, nmap)
+    local internal, index
+    if type(nmap) == "boolean" or not nmap then 
+      internal = true
+      nmap = nil
+    end
 		nmap = nmap or talented_map
 
 		local class = template.class
@@ -1023,35 +1098,47 @@ do
 		do
 			for index, c in ipairs(classmap) do
 				if c == class then
-					--local i = (index - 1) * 3 + 1  --the way WoWHead used to encode classes
           local i = index
+          if expac == 2 or not internal then
+					  i = (index - 1) * 3 + 1  --the way WoWHead used to encode classes
+          end
 					ccode = nmap:sub(i, i)
 					break
 				end
 			end
 		end
 		assert(ccode, "invalid class")
+    
 		local s = nmap:sub(1, 1)
 		local info = self:UncompressSpellData(class)
 		for tab, talents in ipairs(info) do
 			local tmpl = template[tab]
 			local index = 1
 			while index <= #tmpl do
-				local r1, r2
-				r1, index = get_next_valid_index(tmpl, index, talents)
-				r2, index = get_next_valid_index(tmpl, index, talents)
-				local v = r1 * 6 + r2 + 1
-				local c = nmap:sub(v, v)
-				assert(c)
-				code = code .. c
+        local c
+        if expac == 2 then
+          local r1, r2
+          r1, index = get_next_valid_index(tmpl, index, talents)
+          r2, index = get_next_valid_index(tmpl, index, talents)
+          local v = r1 * 6 + r2 + 1
+          c = nmap:sub(v, v)
+        else
+          c = string.format("%x", tmpl[index])
+          index = index + 1
+        end
+        assert(c)
+        code = code .. c
 			end
-			local ncode = rtrim(code, s)
-			if ncode ~= code then
-				code = ncode .. stop
-			end
+      if expac == 2 then
+        local ncode = rtrim(code, s)
+        if ncode ~= code then
+          code = ncode .. stop
+        end
+      end
 		end
+    
 		local output = ccode .. rtrim(code, stop)
-		return output
+    return output
 	end
 
 	function Talented:PackTemplate(template)
@@ -1164,6 +1251,8 @@ do
 
 	local LAYOUT_OFFSET_X, LAYOUT_OFFSET_Y, LAYOUT_DELTA_X, LAYOUT_DELTA_Y
 	local LAYOUT_SIZE_X
+  local expac = GetExpansionLevel()
+
 
 	local function RecalcLayout(offset)
 		if LAYOUT_OFFSET_X ~= offset then
@@ -1173,8 +1262,13 @@ do
 			LAYOUT_DELTA_X = LAYOUT_OFFSET_X / 2
 			LAYOUT_DELTA_Y = LAYOUT_OFFSET_Y / 2
 
-      LAYOUT_SIZE_X --[[LAYOUT_MAX_COLUMNS]] = 4 * LAYOUT_OFFSET_X + LAYOUT_DELTA_X + LAYOUT_DELTA_X / 2
-
+      local expac = GetExpansionLevel()
+      if expac == 0 or expac == 1 then
+        LAYOUT_SIZE_X --[[LAYOUT_MAX_COLUMNS]] = 4 * LAYOUT_OFFSET_X + LAYOUT_DELTA_X + LAYOUT_DELTA_X / 2
+      else
+        LAYOUT_SIZE_X --[[LAYOUT_MAX_COLUMNS]] = 4 * LAYOUT_OFFSET_X + LAYOUT_DELTA_X
+      end
+      
 			return true
 		end
 	end
@@ -1320,16 +1414,23 @@ do
 		if not self.pet then
 			return total == 0 and 1 or total + 9
 		else
-      return total == 0 and 1 or total * 2
-			--[[ Original/Wrath code
-      if total == 0 then
-				return 10
-			end
-			if total > 16 then
-				return 60 + (total - 15) * 4 -- this spec requires Beast Mastery
-			else
-				return 16 + total * 4
-			end--]]
+      if expac == 0 then
+        return total == 0 and 1 or total * 2
+      elseif expac == 1 then
+        --TBC Code Here
+        
+      elseif expac == 2 then
+        if total == 0 then
+          return 10
+        end
+        if total > 16 then
+          return 60 + (total - 15) * 4 -- this spec requires Beast Mastery
+        else
+          return 16 + total * 4
+        end
+      else 
+        assert(false, "Returned unexpected GetExpansionLevel: "..tostring(expac))
+      end
 		end
 	end
 
@@ -1413,7 +1514,7 @@ do
 			end
 			local frame = self:GetUIElement(tab)
 			frame.name:SetFormattedText(L["%s (%d)"], Talented.tabdata[template.class][tab].name, count)
-      if frame.pet then
+      if frame.pet and (expac == 0 or expac == 1) then
         frame.name:SetPoint("TOP", 0, 24)
         --frame.editname:SetPoint("TOP", 0, 24)
       else
@@ -1471,7 +1572,7 @@ do
 				end
 				cb:Show()
 				cb.label:SetText(L["Edit talents"])
-        if template.pet then
+        if template.pet and (expac == 0 or expac == 1) then
           cb:SetPoint("BOTTOMLEFT", cb.parent, "BOTTOMLEFT", 14, 22)
         else
       		cb:SetPoint("BOTTOMLEFT", cb.parent, "BOTTOMLEFT", 14, 8)
@@ -1496,9 +1597,12 @@ do
 		local targetname = self.frame.targetname
 		if targetname then
 			if template.pet then
-				--targetname:Show()
-				--targetname:SetText(TALENT_SPEC_PET_PRIMARY)
-        targetname:Hide()
+        if (expac == 0 or expac == 1) then
+          targetname:Hide()
+        else
+          targetname:Show()
+          targetname:SetText(TALENT_SPEC_PET_PRIMARY)
+        end
 			elseif template.talentGroup then
 				targetname:Show()
 				if template.talentGroup == GetActiveTalentGroup() and target then
@@ -1633,7 +1737,15 @@ do
 	local ipairs = ipairs
 
 	function Talented:IsTemplateAtCap(template)
-		local max = RAID_CLASS_COLORS[template.class] and 51 or 30
+    local max
+    local expac = GetExpansionLevel()
+    if expac == 0 then
+      max = RAID_CLASS_COLORS[template.class] and 51 or 30
+    elseif expac == 1 then
+      max = RAID_CLASS_COLORS[template.class] and 61 or 30  --TBC Code Here(max pet points)
+    else
+      max = RAID_CLASS_COLORS[template.class] and 71 or 20
+    end
 		return self.db.profile.level_cap and self:GetPointCount(template) >= max
 	end
 
@@ -1675,7 +1787,8 @@ do
 		local info = self:UncompressSpellData(template.class)[tab][index]
 		local tier = (info.row - 1) * self:GetSkillPointsPerTier(template.class)
 		local count = self:GetTalentTabCount(template, tab)
-    if self:isPetClass(class) then
+    local expac = GetExpansionLevel()
+    if self:isPetClass(class) and (expac == 0 or expac == 1) then
       tier = 0 
       count = select(3, GetTalentTabInfo(1, nil, true))
     end
@@ -1733,8 +1846,9 @@ do
   
 	function Talented:ValidateTemplate(template, fix)
 		local class = template.class
+    local expac = GetExpansionLevel()
 		if not class then return end
-    if class == "DEATHKNIGHT" then return end --no DK in Vanilla
+    if class == "DEATHKNIGHT" and (expac == 0 or expac == 1) then return end --no DK in Vanilla
 		local pointsPerTier = self:GetSkillPointsPerTier(template.class)
 		local info = self:UncompressSpellData(class)
 		local fixed
@@ -1813,7 +1927,8 @@ do
 		local is_pet = not RAID_CLASS_COLORS[template.class]
 		local p = self.db.profile
     local serverIndex
-    if is_pet then
+    local expac = GetExpansionLevel
+    if is_pet and (expac == 0 or expac == 1) then
       local info = self:UncompressSpellData(template.class)
       serverIndex = info[tab][index].serverIndex
     end
@@ -2075,6 +2190,7 @@ end
 --
 
 do
+  local expac = GetExpansionLevel()
 	function Talented:ApplyCurrentTemplate()
 		local template = self.template
 		local pet = not RAID_CLASS_COLORS[template.class]
@@ -2134,7 +2250,7 @@ do
 				local ttab = template[tab]
 				for index = 1, #tree do
           local serverIndex
-          if pet then
+          if pet and (expac == 0 or expac == 1) then
             serverIndex = tree[index].serverIndex
           end
 					local rank = select(9, GetTalentInfo(tab, serverIndex or index, nil, pet, group))
@@ -2175,7 +2291,7 @@ do
 			local ttab = template[tab]
 			for index = 1, #tree do
         local serverIndex
-        if pet then
+        if pet and (expac == 0 or expac == 1) then
           serverIndex = tree[index].serverIndex
         end
 				local delta = ttab[index] - select(5, GetTalentInfo(tab, serverIndex or index, nil, pet, group))
@@ -2321,6 +2437,8 @@ end
 --
 
 do
+  local expac = GetExpansionLevel()
+  
 	function Talented:FixPetTemplate(template)
 		local data = self:UncompressSpellData(template.class)[1]
 		for index = 1, #data - 1 do
@@ -2342,7 +2460,11 @@ do
 
 	function Talented:GetPetClass()
 		local _, _, _, texture = GetTalentTabInfo(1, nil, true)
-		return texture and UnitCreatureFamily("pet") --texture:sub(10)
+    if (expac == 0 or expac == 1) then
+      return texture and UnitCreatureFamily("pet") 
+    else
+      return texture and texture:sub(10)
+    end
 	end
 
 	local function PetTalentsAvailable()
@@ -2354,6 +2476,7 @@ do
   
   function Talented:isPetClass(class)
     local petClasses = {
+    [0] = { --Vanilla Families
       Bat = true,
       Bear = true,
       Boar = true,
@@ -2370,8 +2493,17 @@ do
       Tallstrider = true,
       Turtle = true,
       ["Wind Serpent"] = true,
-      Wolf = true
+      Wolf = true,
+      },
+    [1] = { --TBC Families
+      --TBC Code Here 
+      },
+    [2] = { --Wrath Families
+      --Wrath Code Here
+      --probably remains empty
+      },
     }
+    petClasses = petClasses[expac]
     return petClasses[class] 
   end
 
@@ -2381,7 +2513,11 @@ do
 		self:FixAlternatesTalents(class)
 		local template = self.pet_current
 		if not template then
-			template = {pet = true, name = UnitCreatureFamily("pet") }--TALENT_SPEC_PET_PRIMARY}
+      if (expac == 0 or expac == 1) then
+        template = {pet = true, name = UnitCreatureFamily("pet") }--TALENT_SPEC_PET_PRIMARY}
+      else
+        template = {pet = true, name = TALENT_SPEC_PET_PRIMARY}
+      end
 			self.pet_current = template
 		end
 		local talentGroup = GetActiveTalentGroup(nil, true)

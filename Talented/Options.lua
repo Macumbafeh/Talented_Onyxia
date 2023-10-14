@@ -1,7 +1,8 @@
 local Talented = _G.Talented
 local L = LibStub("AceLocale-3.0"):GetLocale("Talented")
 
-Talented.max_talent_points = 71
+Talented.max_talent_points = {[0] = 51, [1] = 61, [2] = 71}
+Talented.max_talent_points = Talented.max_talent_points[GetExpansionLevel()]
 
 Talented.defaults = {
 	profile = {
