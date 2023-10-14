@@ -1,3 +1,10 @@
+### 14 October 2023
+Forgot to add my "dev notes". I realized that the template<-->string functions weren't working for Pets. Wasn't throwing any errors or crashing the addon, but because Onyxia's pet talents go above 5 ranks, it wasn't loading them from string correctly. Got that fixed by taking a note from how WoWHead is now doing talent trees, but using base-hex isntead of decimals for when TBC pet talents (are expected) to go past 10, just to keep each talent's rank-code to a single character in the string.
+
+I also started working on the coding that will make the addon transition from Vanilla>TBC>Wrath automatically as the realm progresses.  That's going to take a bit more to complete, including coming up with all the TBC data in Data.lua (some of which I can't even get until Warmane transitions the PTR to TBC), but what I got so far isn't breaking the addon in Vanilla era.  Also have another importer/exporter to work on including for Vanilla Phase (https://classicdb.ch/?talent), so add that to the To-Do list.
+
+Finally, I've started looking at Backwards Compatibility.  By that, I mean when Onyxia transitions to Wrath, or when a player switches to Icecrown or another Wrath realm, I want this Port to work seamlessly with anyone who using Kader's version (sending/receiving templates and other such communications).
+
 ### 10 October 2023, 9pm EST
 Inspections worked without needing any fixes.  I commented out all the imports/exports from Kader's version (Wrath trees) since they won't work in Vanilla or TBC phases (but aren't deleted for when I start working on making the addon automatically update to work in Wrath Era).
 
