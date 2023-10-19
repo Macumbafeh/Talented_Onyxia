@@ -1179,7 +1179,7 @@ do
 		for class, color in pairs(menuColorCodes) do
 			local menuList = self:GetNamedMenu(class .. "List")
 			local index = 1
-			for name, template in pairs(self.db.global.templates) do
+			for name, template in pairs(self.db.global.templates[expac]) do
 				if template.class == class then
 					local entry = menuList[index]
 					if not entry then
@@ -1482,7 +1482,7 @@ do
 		end
 
 		self:GetNamedMenu("Apply").disabled = templateTalentGroup or restricted and pet_restricted
-		self:GetNamedMenu("Delete").disabled = templateTalentGroup or not self.db.global.templates[self.template.name]
+		self:GetNamedMenu("Delete").disabled = templateTalentGroup or not self.db.global.templates[expac][self.template.name]
 		local switch = self:GetNamedMenu("SwitchTalentGroup")
 		switch.disabled = (restricted or not templateTalentGroup or templateTalentGroup == activeTalentGroup)
 		switch.arg1 = templateTalentGroup
@@ -1606,9 +1606,9 @@ do
 				cache = {}
 				info.cache[i] = cache
 			end
-			local name, icon, points = GetTalentTabInfo(i, nil, pet, talentGroup)
+			local name, icon, points = GetTalentTabInfo(i, nil, pet, talentGroup or 1)
 			cache.name, cache.icon, cache.points = name, icon, points
-      if pet then 
+      if expac < 2 and pet then 
         cache.name = UnitCreatureFamily("pet")
         cache.icon = GetPetIcon()
       end

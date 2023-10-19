@@ -1,3 +1,12 @@
+### 19 October 2023
+Refactored so templates are saved by era/phase is complete, and all appears to work well.  No errors when I switched between Onyxia PTR and Icecrown, so I think those are ironed out.  If there are templates from other eras, you'll get a chat message on login/reload with how many templates in each era are saved in the addon's database, but aren't show in the UI. Debating adding a feature to view/edit templates from other eras into the addon.
+
+Tested sending talents to Kader's Talented during Wrath era (on Icecrown) and it appears to work without issues during my testing.
+
+Fixed a few minor UI display errors I found while testing the Onyxia<->Icecrown functionality.
+
+So other than anyone else finding and reporting bugs I didn't find in my testing, or adding the feature for non-era templates I mentioned above, I think the addon port process is now complete until we get access to the custom data from Onyxia's TBC Phases.
+
 ### 18 October 2023
 More era/phase shifting code implemented. Due to the lack of a TBC-era PTR, I will be unable to get the data for TBC Pet Templates until we get one, or Onyxia progresses to TBC. I also added the ClassicDB (ClassicDB.ch) import/exports of talents for Vanilla phases, made it so WoWHead's imports/exports will update for each Era, and the ones Kader implemented should work for Wrath era.
 

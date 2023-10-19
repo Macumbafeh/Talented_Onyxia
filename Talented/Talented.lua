@@ -2,6 +2,7 @@ local Talented = LibStub("AceAddon-3.0"):NewAddon("Talented", "AceEvent-3.0", "A
 _G.Talented = Talented
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Talented")
+local expac = GetExpansionLevel()
 
 -------------------------------------------------------------------------------
 -- core.lua
@@ -25,7 +26,7 @@ do
 
 	function Talented:MakeTarget(targetName)
 		local name = self.db.char.targets[targetName]
-		local src = name and self.db.global.templates[name]
+		local src = name and self.db.global.templates[expac][name]
 		if not src then
 			if name then
 				self.db.char.targets[targetName] = nil
@@ -72,7 +73,7 @@ do
 	end
 
 	function Talented:OnInitialize()
-		self.db = LibStub("AceDB-3.0"):New("TalentedDB", self.defaults)
+		self.db = LibStub("AceDB-3.0"):New("TalentedDB_Onyxia", self.defaults)
 		self:UpgradeOptions()
 		self:LoadTemplates()
 
@@ -104,17 +105,17 @@ do
 	function Talented:DeleteCurrentTemplate()
 		local template = self.template
 		if template.talentGroup then return end
-		local templates = self.db.global.templates
+		local templates = self.db.global.templates[expac]
 		templates[template.name] = nil
 		self:SetTemplate()
 	end
 
 	function Talented:UpdateTemplateName(template, newname)
-		if self.db.global.templates[newname] or template.talentGroup or type(newname) ~= "string" or newname == "" then return end
+		if self.db.global.templates[expac][newname] or template.talentGroup or type(newname) ~= "string" or newname == "" then return end
 
 		local oldname = template.name
 		template.name = newname
-		local t = self.db.global.templates
+		local t = self.db.global.templates[expac]
 		t[newname] = template
 		t[oldname] = nil
 	end
@@ -152,21 +153,21 @@ do
 				return
 			end
 
-			local dst = new(self.db.global.templates, name, src.class)
+			local dst = new(self.db.global.templates[expac], name, src.class)
 			copy(dst, src)
 			self:OpenTemplate(dst)
 			return dst
 		end
 
 		function Talented:CopyTemplate(src)
-			local dst = new(self.db.global.templates, format(L["Copy of %s"], src.name), src.class)
+			local dst = new(self.db.global.templates[expac], format(L["Copy of %s"], src.name), src.class)
 			copy(dst, src)
 			return dst
 		end
 
 		function Talented:CreateEmptyTemplate(class)
 			class = class or select(2, UnitClass "player")
-			local template = new(self.db.global.templates, L["Empty"], class)
+			local template = new(self.db.global.templates[expac], L["Empty"], class)
 
 			local info = self:UncompressSpellData(class)
 
@@ -184,7 +185,7 @@ do
 		Talented.importers = {}
 		Talented.exporters = {}
 		function Talented:ImportTemplate(url)
-			local dst, result = new(self.db.global.templates, L["Imported"])
+			local dst, result = new(self.db.global.templates[expac], L["Imported"])
 			for pattern, method in pairs(self.importers) do
 				if url:find(pattern) then
 					result = method(self, url, dst)
@@ -196,13 +197,13 @@ do
 			if result then
 				if not self:ValidateTemplate(dst) then
 					self:Print(L["The given template is not a valid one!"])
-					self.db.global.templates[dst.name] = nil
+					self.db.global.templates[expac][dst.name] = nil
 				else
 					return dst
 				end
 			else
 				self:Print(L['"%s" does not appear to be a valid URL!'], url)
-				self.db.global.templates[dst.name] = nil
+				self.db.global.templates[expac][dst.name] = nil
 			end
 		end
 	end
@@ -211,7 +212,7 @@ do
 		self:UnpackTemplate(template)
 		if not self:ValidateTemplate(template, true) then
 			local name = template.name
-			self.db.global.templates[name] = nil
+			self.db.global.templates[expac][name] = nil
 			self:Print(L["The template '%s' is no longer valid and has been removed."], name)
 			return
 		end
@@ -355,40 +356,59 @@ do
 
 	function Talented:LoadTemplates()
 		local db = self.db.global.templates
-		local invalid = {}
-		for name, code in pairs(db) do
-      if type(code) == "string" then
-				local class = self:GetTemplateStringClass(code)
-				if class then
-					db[name] = {
-						name = name,
-						code = code,
-						class = class
-					}
-				else
-					db[name] = nil
-					invalid[#invalid + 1] = name
-				end
-			elseif not self:ValidateTemplate(code) then
-				db[name] = nil
-				invalid[#invalid + 1] = name
-			end
-		end
-		if next(invalid) then
-			table.sort(invalid)
-			self:Print(L["The following templates are no longer valid and have been removed:"])
-			self:Print(table.concat(invalid, ", "))
-		end
 
+    for expan, templates in pairs(db) do
+      local invalid = {}
+      local count = 0
+      for name, code in pairs(templates) do
+        if expac == expan then
+          if type(code) == "string" then
+            local class = self:GetTemplateStringClass(code)
+            if class then
+              db[expan][name] = {
+                name = name,
+                code = code,
+                class = class
+              }
+            else
+              db[expan][name] = nil
+              invalid[#invalid + 1] = name
+            end
+          elseif not self:ValidateTemplate(code) then
+            db[expan][name] = nil
+            invalid[#invalid + 1] = name
+          end
+        else
+          count = count + 1
+        end
+      end
+      if expac ~= expan and count > 0 then
+          if expan == 0 then
+            self:Print(tostring(count), "Vanilla Templates in database but not listed in UI.")
+          elseif expan == 1 then
+            self:Print(tostring(count), "TBC Templates in database but not listed in UI.")
+          elseif expan == 2 then
+            self:Print(tostring(count), "Wrath Templates in database but not listed in UI.")
+          end
+      end          
+      if next(invalid) then
+        table.sort(invalid)
+        self:Print(L["The following templates are no longer valid and have been removed:"])
+        self:Print(table.concat(invalid, ", "))
+      end
+    end
+    
 		self.OnDatabaseShutdown = function(self, event, db)
 			local _db = db.global.templates
-			for name, template in pairs(_db) do
-				template.talentGroup = nil
-				Talented:PackTemplate(template)
-				if template.code then
-					_db[name] = template.code
-				end
-			end
+      for expan, templates in pairs(_db) do
+        for name, template in pairs(templates) do
+          template.talentGroup = nil
+          Talented:PackTemplate(template)
+          if template.code then
+            _db[expan][name] = template.code
+          end
+        end
+      end
 			self.db = nil
 		end
 		self.db.RegisterCallback(self, "OnDatabaseShutdown")
@@ -899,8 +919,8 @@ do
           if not index then
             return
           end
-          local b = fmod(index, 6)
-          local a = (index - b) / 6
+          b = fmod(index, 6)
+          a = (index - b) / 6
           if t >= #talents[tabs] then
             temp_tabcount[tabs] = count
             tabs = tabs + 1
@@ -2576,7 +2596,7 @@ do
 					info.inactive = true
 					ninfo.inactive = nil
 				end
-				for _, template in pairs(self.db.global.templates) do
+				for _, template in pairs(self.db.global.templates[expac]) do
 					if template.class == class and not template.code then
 						local value = template[1][index] + template[1][index + 1]
 						if talent then

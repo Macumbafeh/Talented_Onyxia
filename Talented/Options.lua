@@ -17,7 +17,7 @@ Talented.defaults = {
 		glyph_on_talent_swap = "active",
 		restore_bars = false
 	},
-	global = {templates = {}},
+	global = {templates = {[0] = {}, [1] = {}, [2] = {},}},
 	char = {targets = {}}
 }
 
@@ -153,7 +153,7 @@ Talented.options = {
 			dialogHidden = true,
 			order = 99,
 			set = function(_, name)
-				local template = Talented.db.global.templates[name]
+				local template = Talented.db.global.templates[expac][name]
 				if not template then
 					Talented:Print(L['Can not apply, unknown template "%s"'], name)
 					return
