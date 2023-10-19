@@ -1,3 +1,12 @@
+### 18 October 2023
+More era/phase shifting code implemented. Due to the lack of a TBC-era PTR, I will be unable to get the data for TBC Pet Templates until we get one, or Onyxia progresses to TBC. I also added the ClassicDB (ClassicDB.ch) import/exports of talents for Vanilla phases, made it so WoWHead's imports/exports will update for each Era, and the ones Kader implemented should work for Wrath era.
+
+I need to do one major change with how the addon saves templates to make it so you don't lose templates when switching between Wrath-era realms and Onyxia (ie if you want to play on Icecrown AND Onyxia without losing templates on either).  Also, I noticed there are errors and problems loading the addon on Icecrown (which will also impact Onyxia when it moves onto Wrath era) that need fixed.
+
+After all that, I want to make sure templates sent to players useing Kader's edition during Wrath-era work with this version/port of the addon. It SHOULD work without needing to do anything if everything above is working correctly, but it will still need to be tested.
+
+The end is in sight...just in time for the announcement of Onyxia officially launching a month from today.
+
 ### 14 October 2023
 Forgot to add my "dev notes". I realized that the template<-->string functions weren't working for Pets. Wasn't throwing any errors or crashing the addon, but because Onyxia's pet talents go above 5 ranks, it wasn't loading them from string correctly. Got that fixed by taking a note from how WoWHead is now doing talent trees, but using base-hex isntead of decimals for when TBC pet talents (are expected) to go past 10, just to keep each talent's rank-code to a single character in the string.
 

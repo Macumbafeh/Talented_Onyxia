@@ -7,6 +7,7 @@ local GREEN_FONT_COLOR = GREEN_FONT_COLOR
 local NORMAL_FONT_COLOR = NORMAL_FONT_COLOR
 local min, max = math.min, math.max
 local GameTooltip = GameTooltip
+local expac = GetExpansionLevel()
 
 -------------------------------------------------------------------------------
 -- ui\pool.lua - Talented.Pool
@@ -208,14 +209,16 @@ do
 		b:SetScript("OnClick", function(self) Talented:OpenTemplateMenu(self) end)
 		b:SetPoint("LEFT", parent.bactions, "RIGHT", 14, 0)
 		parent.bmode = b
-
-		--[[b = MakeButton(parent)
-		b:SetText(GLYPHS)
-		b:SetSize(max(100, b:GetTextWidth() + 22), 22)
-		b:SetScript("OnClick", function(self) Talented:ToggleGlyphFrame() end)
-		b:SetPoint("LEFT", parent.bmode, "RIGHT", 14, 0)
-		parent.bglyphs = b--]]
-
+    
+    if expac == 2 then
+      b = MakeButton(parent)
+      b:SetText(GLYPHS)
+      b:SetSize(max(100, b:GetTextWidth() + 22), 22)
+      b:SetScript("OnClick", function(self) Talented:ToggleGlyphFrame() end)
+      b:SetPoint("LEFT", parent.bmode, "RIGHT", 14, 0)
+      parent.bglyphs = b
+    end
+    
 		local e = CreateFrame("EditBox", nil, parent, "InputBoxTemplate")
 		e:SetFontObject(ChatFontNormal)
 		e:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
@@ -230,16 +233,22 @@ do
 		end)
 		e:SetScript("OnEnter", Frame_OnEnter)
 		e:SetScript("OnLeave", Frame_OnLeave)
-		--e:SetPoint("LEFT", parent.bglyphs, "RIGHT", 14, 1)
-    e:SetPoint("LEFT", parent.bmode, "RIGHT", 14, 1)
+    if expac == 2 then
+		  e:SetPoint("LEFT", parent.bglyphs, "RIGHT", 14, 1)
+    else
+      e:SetPoint("LEFT", parent.bmode, "RIGHT", 14, 1)
+    end
 		e.tooltip = L["You can edit the name of the template here. You must press the Enter key to save your changes."]
 		parent.editname = e
 
 		local targetname = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		targetname:SetJustifyH("LEFT")
 		targetname:SetSize(185, 13)
-		--targetname:SetPoint("LEFT", parent.bglyphs, "RIGHT", 14, 0)
-    targetname:SetPoint("LEFT", parent.bmode, "RIGHT", 14, 0)
+    if expac == 2 then
+      targetname:SetPoint("LEFT", parent.bglyphs, "RIGHT", 14, 0)
+    else
+      targetname:SetPoint("LEFT", parent.bmode, "RIGHT", 14, 0)
+    end
 		parent.targetname = targetname
 
 		do
@@ -307,33 +316,46 @@ do
 
 	local function BaseFrame_SetTabSize(self, tabs)
 		tabs = tabs or 3
-		--local bglyphs, editname, targetname, points = self.bglyphs, self.editname, self.targetname, self.points
-    local bmode, editname, targetname, points = self.bmode, self.editname, self.targetname, self.points
-		--bglyphs:ClearAllPoints()
-    --bmode:ClearAllPoints()
+    local bglyphs,bmode
+    local editname, targetname, points = self.editname, self.targetname, self.points
+    if expac == 2 then
+      bglyphs = self.bglyphs
+      bglyphs:ClearAllPoints()
+    else
+      bmode = self.bmode
+    end
 		editname:ClearAllPoints()
 		targetname:ClearAllPoints()
 		points:ClearAllPoints()
 		if tabs == 1 then
-			--[[bglyphs:SetPoint("TOPLEFT", self.bactions, "BOTTOMLEFT", 0, -5)
-			editname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -4)
-			targetname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -5)--]]
-			editname:SetPoint("CENTER", bmode, "CENTER", -32, -24)
-			targetname:SetPoint("TOPLEFT", bmode, "BOTTOMLEFT", 0, -5)
+      if expac == 2 then
+        bglyphs:SetPoint("TOPLEFT", self.bactions, "BOTTOMLEFT", 0, -5)
+        editname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -4)
+        targetname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -5)
+      else
+        editname:SetPoint("CENTER", bmode, "CENTER", -32, -24)
+        targetname:SetPoint("TOPLEFT", bmode, "BOTTOMLEFT", 0, -5)
+      end
 			points:SetPoint("TOPRIGHT", self, "TOPRIGHT", -8, -56)
 		elseif tabs == 2 then
-			--[[bglyphs:SetPoint("LEFT", self.bmode, "RIGHT", 14, 0)
-			editname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -4)
-			targetname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -5)--]]
-			editname:SetPoint("TOPLEFT", bmode, "BOTTOMLEFT", 0, -4)
-			targetname:SetPoint("TOPLEFT", bmode, "BOTTOMLEFT", 0, -5)
+      if expac == 2 then
+        bglyphs:SetPoint("LEFT", self.bmode, "RIGHT", 14, 0)
+        editname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -4)
+        targetname:SetPoint("TOPLEFT", bglyphs, "BOTTOMLEFT", 0, -5)
+      else
+        editname:SetPoint("TOPLEFT", bmode, "BOTTOMLEFT", 0, -4)
+        targetname:SetPoint("TOPLEFT", bmode, "BOTTOMLEFT", 0, -5)
+      end
 			points:SetPoint("TOPRIGHT", self, "TOPRIGHT", -8, -31)
 		elseif tabs == 3 then
-			--[[bglyphs:SetPoint("LEFT", self.bmode, "RIGHT", 14, 0)
-			editname:SetPoint("LEFT", bglyphs, "RIGHT", 14, 1)
-			targetname:SetPoint("LEFT", bglyphs, "RIGHT", 14, 0)--]]
-			editname:SetPoint("LEFT", bmode, "RIGHT", 14, 1)
-			targetname:SetPoint("LEFT", bmode, "RIGHT", 14, 0)
+      if expac == 2 then
+        bglyphs:SetPoint("LEFT", self.bmode, "RIGHT", 14, 0)
+        editname:SetPoint("LEFT", bglyphs, "RIGHT", 14, 1)
+        targetname:SetPoint("LEFT", bglyphs, "RIGHT", 14, 0)
+      else
+        editname:SetPoint("LEFT", bmode, "RIGHT", 14, 1)
+        targetname:SetPoint("LEFT", bmode, "RIGHT", 14, 0)
+      end
 			points:SetPoint("TOPRIGHT", self, "TOPRIGHT", -40, -6)
 		end
 	end
@@ -921,38 +943,43 @@ end
 do
 	local classNames = {}
 	FillLocalizedClassList(classNames, false)
-	--classNames["Ferocity"] = Talented.tabdata["Ferocity"][1].name
-	--classNames["Tenacity"] = Talented.tabdata["Tenacity"][1].name
-	--classNames["Cunning"] = Talented.tabdata["Cunning"][1].name
-  classNames["Bat"] = Talented.tabdata["Bat"][1].name
-  classNames["Bear"] = Talented.tabdata["Bear"][1].name
-  classNames["Boar"] = Talented.tabdata["Boar"][1].name
-  classNames["Cat"] = Talented.tabdata["Cat"][1].name
-  classNames["Crab"] = Talented.tabdata["Crab"][1].name
-  classNames["Crocolisk"] = Talented.tabdata["Crocolisk"][1].name
-  classNames["Gorilla"] = Talented.tabdata["Gorilla"][1].name
-  classNames["Hyena"] = Talented.tabdata["Hyena"][1].name
-  classNames["Raptor"] = Talented.tabdata["Raptor"][1].name
-  classNames["Scorpid"] = Talented.tabdata["Scorpid"][1].name
-  classNames["Spider"] = Talented.tabdata["Spider"][1].name
-  classNames["Tallstrider"] = Talented.tabdata["Tallstrider"][1].name
-  classNames["Turtle"] = Talented.tabdata["Turtle"][1].name
-  classNames["Wolf"] = Talented.tabdata["Wolf"][1].name
-  classNames["Bird of Prey"] = Talented.tabdata["Bird of Prey"][1].name
-  classNames["Carrion Bird"] = Talented.tabdata["Carrion Bird"][1].name
-  classNames["Wind Serpent"] = Talented.tabdata["Wind Serpent"][1].name
+  if expac == 0 then
+    classNames["Bat"] = Talented.tabdata["Bat"][1].name
+    classNames["Bear"] = Talented.tabdata["Bear"][1].name
+    classNames["Boar"] = Talented.tabdata["Boar"][1].name
+    classNames["Cat"] = Talented.tabdata["Cat"][1].name
+    classNames["Crab"] = Talented.tabdata["Crab"][1].name
+    classNames["Crocolisk"] = Talented.tabdata["Crocolisk"][1].name
+    classNames["Gorilla"] = Talented.tabdata["Gorilla"][1].name
+    classNames["Hyena"] = Talented.tabdata["Hyena"][1].name
+    classNames["Raptor"] = Talented.tabdata["Raptor"][1].name
+    classNames["Scorpid"] = Talented.tabdata["Scorpid"][1].name
+    classNames["Spider"] = Talented.tabdata["Spider"][1].name
+    classNames["Tallstrider"] = Talented.tabdata["Tallstrider"][1].name
+    classNames["Turtle"] = Talented.tabdata["Turtle"][1].name
+    classNames["Wolf"] = Talented.tabdata["Wolf"][1].name
+    classNames["Bird of Prey"] = Talented.tabdata["Bird of Prey"][1].name
+    classNames["Carrion Bird"] = Talented.tabdata["Carrion Bird"][1].name
+    classNames["Wind Serpent"] = Talented.tabdata["Wind Serpent"][1].name
+  elseif expac == 1 then
+    --TBC Code Here
+  elseif expac == 2 then
+    classNames["Ferocity"] = Talented.tabdata["Ferocity"][1].name
+    classNames["Tenacity"] = Talented.tabdata["Tenacity"][1].name
+    classNames["Cunning"] = Talented.tabdata["Cunning"][1].name
+  end
 
 	local menuColorCodes = {}
 	local function fill_menuColorCodes()
 		for name, default in pairs(RAID_CLASS_COLORS) do
-      if name ~= "DEATHKNIGHT" then
+      if name ~= "DEATHKNIGHT"  or expac == 2 then
         local color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[name] or default
         menuColorCodes[name] = string.format("|cff%2x%2x%2x", color.r * 255, color.g * 255, color.b * 255)
       end
 		end
-		--menuColorCodes["Ferocity"] = "|cffe0a040"
-		--menuColorCodes["Tenacity"] = "|cffe0a040"
-		--menuColorCodes["Cunning"] = "|cffe0a040"
+		menuColorCodes["Ferocity"] = "|cffe0a040"
+		menuColorCodes["Tenacity"] = "|cffe0a040"
+		menuColorCodes["Cunning"] = "|cffe0a040"
     menuColorCodes["Bat"] = "|cffe0a040"
     menuColorCodes["Bear"] = "|cffe0a040"
     menuColorCodes["Boar"] = "|cffe0a040"
@@ -1052,14 +1079,16 @@ do
 
 		local list = {}
 		for index, name in ipairs(CLASS_SORT_ORDER) do
-      if name ~= "DEATHKNIGHT" then
+      if name ~= "DEATHKNIGHT" or expac == 2 then
         list[#list+1] = name
       end
 			--list[index] = name
 		end
-		--list[#list + 1] = "Ferocity"
-		--list[#list + 1] = "Tenacity"
-		--list[#list + 1] = "Cunning"
+    if expac == 2 then
+      list[#list + 1] = "Ferocity"
+      list[#list + 1] = "Tenacity"
+      list[#list + 1] = "Cunning"
+    end
 
 		for _, name in ipairs(list) do
 			entry = self:GetNamedMenu(name)
@@ -1072,41 +1101,45 @@ do
     
     menu[#menu + 1] = self:GetNamedMenu("separator")
     
-    local petlist = {}
-    petlist[#petlist + 1] = "Bat"
-    petlist[#petlist + 1] = "Bear"
-    petlist[#petlist + 1] = "Boar"
-    petlist[#petlist + 1] = "Cat"
-    petlist[#petlist + 1] = "Crab"
-    petlist[#petlist + 1] = "Crocolisk"
-    petlist[#petlist + 1] = "Gorilla"
-    petlist[#petlist + 1] = "Hyena"
-    petlist[#petlist + 1] = "Raptor"
-    petlist[#petlist + 1] = "Scorpid"
-    petlist[#petlist + 1] = "Spider"
-    petlist[#petlist + 1] = "Tallstrider"
-    petlist[#petlist + 1] = "Turtle"
-    petlist[#petlist + 1] = "Wolf"
-    petlist[#petlist + 1] = "Bird of Prey" 
-    petlist[#petlist + 1] = "Carrion Bird" 
-    petlist[#petlist + 1] = "Wind Serpent" 
-    
-    local petmenu = self:GetNamedMenu("HunterPets")
-    petmenu.text = "Hunter Pets"
-    petmenu.hasArrow = true
-    petmenu.colorCode = menuColorCodes["HUNTER"]
-    petmenu.menuList = {}
-    for _, name in ipairs(petlist) do
-			entry = self:GetNamedMenu(name)
-			entry.text = classNames[name]
-			entry.colorCode = menuColorCodes[name]
-			entry.hasArrow = true
-			entry.menuList = self:GetNamedMenu(name .. "List")
-			petmenu.menuList[#petmenu.menuList + 1] = entry
-		end
-    menu[#menu + 1] = petmenu
+    if expac == 0 then
+      local petlist = {}
+      petlist[#petlist + 1] = "Bat"
+      petlist[#petlist + 1] = "Bear"
+      petlist[#petlist + 1] = "Boar"
+      petlist[#petlist + 1] = "Cat"
+      petlist[#petlist + 1] = "Crab"
+      petlist[#petlist + 1] = "Crocolisk"
+      petlist[#petlist + 1] = "Gorilla"
+      petlist[#petlist + 1] = "Hyena"
+      petlist[#petlist + 1] = "Raptor"
+      petlist[#petlist + 1] = "Scorpid"
+      petlist[#petlist + 1] = "Spider"
+      petlist[#petlist + 1] = "Tallstrider"
+      petlist[#petlist + 1] = "Turtle"
+      petlist[#petlist + 1] = "Wolf"
+      petlist[#petlist + 1] = "Bird of Prey" 
+      petlist[#petlist + 1] = "Carrion Bird" 
+      petlist[#petlist + 1] = "Wind Serpent" 
+      
+      local petmenu = self:GetNamedMenu("HunterPets")
+      petmenu.text = "Hunter Pets"
+      petmenu.hasArrow = true
+      petmenu.colorCode = menuColorCodes["HUNTER"]
+      petmenu.menuList = {}
+      for _, name in ipairs(petlist) do
+        entry = self:GetNamedMenu(name)
+        entry.text = classNames[name]
+        entry.colorCode = menuColorCodes[name]
+        entry.hasArrow = true
+        entry.menuList = self:GetNamedMenu(name .. "List")
+        petmenu.menuList[#petmenu.menuList + 1] = entry
+      end
+      menu[#menu + 1] = petmenu
 
-		menu[#menu + 1] = self:GetNamedMenu("separator")
+      menu[#menu + 1] = self:GetNamedMenu("separator")
+    elseif expac == 1 then
+      --TBC Code Here
+    end
 
 		entry = self:GetNamedMenu("Inspected")
 		entry.text = L["Inspected Characters"]
@@ -1276,68 +1309,64 @@ do
 
 		local list = {}
 		for index, name in ipairs(CLASS_SORT_ORDER) do
-      if name ~= "DEATHKNIGHT" then
+      if name ~= "DEATHKNIGHT" or expac == 2 then
         list[#list+1] = name
       end
 			--list[index] = name
 		end
-		--list[#list + 1] = "Ferocity"
-		--list[#list + 1] = "Tenacity"
-		--list[#list + 1] = "Cunning"
-    local petlist = {}
-    petlist[#petlist + 1] = "Bat"
-    petlist[#petlist + 1] = "Bear"
-    petlist[#petlist + 1] = "Boar"
-    petlist[#petlist + 1] = "Cat"
-    petlist[#petlist + 1] = "Crab"
-    petlist[#petlist + 1] = "Crocolisk"
-    petlist[#petlist + 1] = "Gorilla"
-    petlist[#petlist + 1] = "Hyena"
-    petlist[#petlist + 1] = "Raptor"
-    petlist[#petlist + 1] = "Scorpid"
-    petlist[#petlist + 1] = "Spider"
-    petlist[#petlist + 1] = "Tallstrider"
-    petlist[#petlist + 1] = "Turtle"
-    petlist[#petlist + 1] = "Wolf"
-    petlist[#petlist + 1] = "Bird of Prey" 
-    petlist[#petlist + 1] = "Carrion Bird" 
-    petlist[#petlist + 1] = "Wind Serpent" 
+    if expac == 2 then
+      list[#list + 1] = "Ferocity"
+      list[#list + 1] = "Tenacity"
+      list[#list + 1] = "Cunning"
+    end
+    if expac == 0 then
+      local petlist = {}
+      petlist[#petlist + 1] = "Bat"
+      petlist[#petlist + 1] = "Bear"
+      petlist[#petlist + 1] = "Boar"
+      petlist[#petlist + 1] = "Cat"
+      petlist[#petlist + 1] = "Crab"
+      petlist[#petlist + 1] = "Crocolisk"
+      petlist[#petlist + 1] = "Gorilla"
+      petlist[#petlist + 1] = "Hyena"
+      petlist[#petlist + 1] = "Raptor"
+      petlist[#petlist + 1] = "Scorpid"
+      petlist[#petlist + 1] = "Spider"
+      petlist[#petlist + 1] = "Tallstrider"
+      petlist[#petlist + 1] = "Turtle"
+      petlist[#petlist + 1] = "Wolf"
+      petlist[#petlist + 1] = "Bird of Prey" 
+      petlist[#petlist + 1] = "Carrion Bird" 
+      petlist[#petlist + 1] = "Wind Serpent" 
 
-		for _, name in ipairs(list) do
-			local s = {
-				text = classNames[name],
-				colorCode = menuColorCodes[name],
-				func = Menu_NewTemplate,
-				arg1 = name
-			}
-			menuList[#menuList + 1] = s
-		end
-    
-    local petMenu = self:GetNamedMenu("NewHunterPets")
-    petMenu.text = "Hunter Pets"
-    petMenu.hasArrow = true
-    petMenu.colorCode = menuColorCodes["HUNTER"]
-    petMenu.menuList = {}
-    for _, name in ipairs(petlist) do
-			local s = {
-			  text = classNames[name],
-        colorCode = menuColorCodes[name],
-			  func = Menu_NewTemplate,
-			  arg1 = name
-      }
-			petMenu.menuList[#petMenu.menuList + 1] = s
-		end
-    menuList[#menuList + 1] = petMenu
-    
-    --[[for _, name in ipairs(petlist) do
-    	local s = {
-				text = classNames[name],
-				colorCode = menuColorCodes[name],
-				func = Menu_NewTemplate,
-				arg1 = name
-			}
-			menuList[#menuList + 1] = s
-		end  --]]
+      for _, name in ipairs(list) do
+        local s = {
+          text = classNames[name],
+          colorCode = menuColorCodes[name],
+          func = Menu_NewTemplate,
+          arg1 = name
+        }
+        menuList[#menuList + 1] = s
+      end
+      
+      local petMenu = self:GetNamedMenu("NewHunterPets")
+      petMenu.text = "Hunter Pets"
+      petMenu.hasArrow = true
+      petMenu.colorCode = menuColorCodes["HUNTER"]
+      petMenu.menuList = {}
+      for _, name in ipairs(petlist) do
+        local s = {
+          text = classNames[name],
+          colorCode = menuColorCodes[name],
+          func = Menu_NewTemplate,
+          arg1 = name
+        }
+        petMenu.menuList[#petMenu.menuList + 1] = s
+      end
+      menuList[#menuList + 1] = petMenu
+    elseif expac == 1 then
+      --TBC Code Here
+    end
 
 		menu[#menu + 1] = {
 			text = L["New Template"],

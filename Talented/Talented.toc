@@ -2,7 +2,7 @@
 ## Title: Talented (for Onyxia)
 ## Notes: The Talent Template Editor
 ## Author: Jerry (Kader Edition), LezChap (Onyxia Port)
-## Version: v3.0.0
+## Version: v3.0.1
 ## OptionalDeps: Ace3
 ## SavedVariables: TalentedDB
 ## LoadManagers: Talented_Loader AddonLoader

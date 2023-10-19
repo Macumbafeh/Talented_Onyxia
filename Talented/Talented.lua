@@ -1013,7 +1013,7 @@ do
 
 		for i = 2, code:len() do
 			local char = code:sub(i, i)
-			if expac == 2 and char == stop then
+			if char == stop then --and expac == 2
 				if #t >= #talents[tab] then
 					tab = tab + 1
 					t = wipe(template[tab] or {})
@@ -1023,7 +1023,7 @@ do
 				t = wipe(template[tab] or {})
 				template[tab] = t
 			else
-        if expac == 2 then
+        if expac == 2 or not internal then
           index = nmap:find(char, nil, true) - 1
           if not index then
             return
@@ -1116,7 +1116,7 @@ do
 			local index = 1
 			while index <= #tmpl do
         local c
-        if expac == 2 then
+        if expac == 2 or not internal then
           local r1, r2
           r1, index = get_next_valid_index(tmpl, index, talents)
           r2, index = get_next_valid_index(tmpl, index, talents)
@@ -1129,13 +1129,16 @@ do
         assert(c)
         code = code .. c
 			end
-      if expac == 2 then
+      if expac == 2 or not internal then
         local ncode = rtrim(code, s)
         if ncode ~= code then
           code = ncode .. stop
         end
       end
 		end
+    if internal or expac ~= 2 then
+      code = rtrim(code, s)
+    end
     
 		local output = ccode .. rtrim(code, stop)
     return output
