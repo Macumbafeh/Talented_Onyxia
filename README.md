@@ -2,6 +2,8 @@
 
 This is a fork of Talented from bKader(https://github.com/bkader/Talented_WoTLK) updated for use Warmane's Onyxia PTE server with Vanilla (and later TBC) Talents.
 
+this version is an updated version of the TBC code.
+
 Check [Porting Progress](Porting-Progess.md) to see how the progress for making this fully work on Onyxia is going.
 
 ## Install Note:
