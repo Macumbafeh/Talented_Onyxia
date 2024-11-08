@@ -834,7 +834,38 @@ do
     "Wind Serpent",
     },
   [1] = { --tbc
-  
+		"DRUID",
+		"HUNTER",
+		"MAGE",
+		"PALADIN",
+		"PRIEST",
+		"ROGUE",
+		"SHAMAN",
+		"WARLOCK",
+		"WARRIOR",
+	"Bat",
+	"Bear",
+	"Boar",
+	"Cat",
+	"Crab",
+	"Crocolisk",
+	"Dragonhawk",
+	"Gorilla",
+	"Hyena",
+	"Raptor",
+	"Ravager",
+	"Scorpid",
+	"Serpent",
+	"Spider",
+	"Sporebat",
+	"Tallstrider",
+	"Turtle",
+	"Wolf",
+	"Bird of Prey",
+	"Carrion Bird",
+	"Nether Ray",
+	"Warp Striker",
+	"Wind Serpent",
     },
   [2] = { --wrath
 		"DRUID",
@@ -1353,7 +1384,7 @@ do
 		local first_tree = talents[1]
 		local size_y = first_tree[#first_tree].row * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
     if Talented:isPetClass(class) then
-      size_y = 4 * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
+      size_y = 5 * LAYOUT_OFFSET_Y + LAYOUT_DELTA_Y
       bottom_offset = (bottom_offset / 2) + LAYOUT_BASE_Y
     end
 		for tab, tree in ipairs(talents) do
@@ -1440,8 +1471,7 @@ do
       if expac == 0 then
         return total == 0 and 1 or total * 2
       elseif expac == 1 then
-        --TBC Code Here
-        
+        return total == 0 and 1 or total * 2
       elseif expac == 2 then
         if total == 0 then
           return 10
@@ -1765,7 +1795,7 @@ do
     if expac == 0 then
       max = RAID_CLASS_COLORS[template.class] and 51 or 30
     elseif expac == 1 then
-      max = RAID_CLASS_COLORS[template.class] and 61 or 30  --TBC Code Here(max pet points)
+      max = RAID_CLASS_COLORS[template.class] and 61 or 35  --TBC Code Here(max pet points)
     else
       max = RAID_CLASS_COLORS[template.class] and 71 or 20
     end
@@ -2519,7 +2549,29 @@ do
       Wolf = true,
       },
     [1] = { --TBC Families
-      --TBC Code Here 
+		Bat = true,
+		Bear = true,
+		Boar = true,
+		["Carrion Bird"] = true,
+		Cat = true,
+		Crab = true,
+		Crocolisk = true,
+		Dragonhawk = true,
+		Gorilla = true,
+		Hyena = true,
+		["Nether Ray"]  = true,
+		["Bird of Prey"] = true,
+		Raptor = true,
+		Ravager = true,
+		Scorpid = true,
+		Serpent = true,
+		Spider = true,
+		Sporebat = true,
+		Tallstrider = true,
+		Turtle = true,
+		["Warp Striker"] = true,
+		["Wind Serpent"] = true,
+		Wolf = true,
       },
     [2] = { --Wrath Families
       --Wrath Code Here
