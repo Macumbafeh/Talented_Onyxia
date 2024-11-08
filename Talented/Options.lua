@@ -134,7 +134,7 @@ Talented.options = {
 					arg = "ReLayout",
 					order = 14,
 					min = 0.5,
-					max = 1.0,
+					max = 2.0,
 					step = 0.01
 				},
 				add_bottom_offset = {
@@ -258,7 +258,7 @@ Talented.options = {
 					arg = "ReLayout",
 					order = 14,
 					min = 0.5,
-					max = 1.0,
+					max = 2.0,
 					step = 0.01
 				},
 				add_bottom_offset = {
@@ -399,7 +399,7 @@ Talented.options = {
 					arg = "ReLayout",
 					order = 14,
 					min = 0.5,
-					max = 1.0,
+					max = 2.0,
 					step = 0.01
 				},
 				add_bottom_offset = {
