@@ -971,7 +971,7 @@ do
     spelldata[0]["Wind Serpent"][1][19] = deep_copy(FamilySkills[0][19])
     sortPetSkills()    
   elseif expac == 1 then --TBC Family Skills
-	  spelldata[1].Bat[1][2] = deep_copy(FamilySkills[1][2])
+	spelldata[1].Bat[1][2] = deep_copy(FamilySkills[1][2])
     spelldata[1].Bat[1][12] = deep_copy(FamilySkills[1][12])
     spelldata[1].Bat[1][13] = deep_copy(FamilySkills[1][13])
     spelldata[1].Bear[1][2] = deep_copy(FamilySkills[1][2])
@@ -1090,15 +1090,15 @@ do
 			{background = "PaladinCombat"}
 		},
     Cunning = {{background = "HunterPetCunning"}},
-		Tenacity = {{background = "HunterPetTenacity"}},
-		Ferocity = {{background = "HunterPetFerocity"}},
+	Tenacity = {{background = "HunterPetTenacity"}},
+	Ferocity = {{background = "HunterPetFerocity"}},
     
-		["Bird of Prey"] = {{background = "HunterPetCunning"}},
-		Spider = {{background = "HunterPetCunning"}},
-		Bat = {{background = "HunterPetCunning"}},
-		["Wind Serpent"] = {{background = "HunterPetCunning"}},
-		["Warp Striker"] = {{background = "HunterPetCunning"}},
-		["Nether Ray"] = {{background = "HunterPetCunning"}},
+	["Bird of Prey"] = {{background = "HunterPetCunning"}},
+	Spider = {{background = "HunterPetCunning"}},
+	Bat = {{background = "HunterPetCunning"}},
+	["Wind Serpent"] = {{background = "HunterPetCunning"}},
+	["Warp Striker"] = {{background = "HunterPetCunning"}},
+	["Nether Ray"] = {{background = "HunterPetCunning"}},
 		
     Bear = {{background = "HunterPetTenacity"}},
     Boar = {{background = "HunterPetTenacity"}},
@@ -1108,7 +1108,7 @@ do
     Scorpid = {{background = "HunterPetTenacity"}},
     Turtle = {{background = "HunterPetTenacity"}},
     
-		["Carrion Bird"] = {{background = "HunterPetFerocity"}},
+	["Carrion Bird"] = {{background = "HunterPetFerocity"}},
     Cat = {{background = "HunterPetFerocity"}},
 	Dragonhawk = {{background = "HunterPetFerocity"}},
     Hyena = {{background = "HunterPetFerocity"}},
