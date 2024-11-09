@@ -962,7 +962,29 @@ do
     classNames["Carrion Bird"] = Talented.tabdata["Carrion Bird"][1].name
     classNames["Wind Serpent"] = Talented.tabdata["Wind Serpent"][1].name
   elseif expac == 1 then
-    --TBC Code Here
+    classNames["Bat"] = Talented.tabdata["Bat"][1].name
+    classNames["Bear"] = Talented.tabdata["Bear"][1].name
+    classNames["Boar"] = Talented.tabdata["Boar"][1].name
+    classNames["Cat"] = Talented.tabdata["Cat"][1].name
+    classNames["Crab"] = Talented.tabdata["Crab"][1].name
+    classNames["Crocolisk"] = Talented.tabdata["Crocolisk"][1].name
+	classNames["Dragonhawk"] = Talented.tabdata["Dragonhawk"][1].name
+    classNames["Gorilla"] = Talented.tabdata["Gorilla"][1].name
+    classNames["Hyena"] = Talented.tabdata["Hyena"][1].name
+    classNames["Raptor"] = Talented.tabdata["Raptor"][1].name
+	classNames["Ravager"] = Talented.tabdata["Ravager"][1].name
+    classNames["Scorpid"] = Talented.tabdata["Scorpid"][1].name
+	classNames["Serpent"] = Talented.tabdata["Serpent"][1].name
+    classNames["Spider"] = Talented.tabdata["Spider"][1].name
+	classNames["Sporebat"] = Talented.tabdata["Sporebat"][1].name
+    classNames["Tallstrider"] = Talented.tabdata["Tallstrider"][1].name
+    classNames["Turtle"] = Talented.tabdata["Turtle"][1].name
+    classNames["Wolf"] = Talented.tabdata["Wolf"][1].name
+    classNames["Bird of Prey"] = Talented.tabdata["Bird of Prey"][1].name
+    classNames["Carrion Bird"] = Talented.tabdata["Carrion Bird"][1].name
+	classNames["Nether Ray"] = Talented.tabdata["Nether Ray"][1].name
+	classNames["Warp Striker"] = Talented.tabdata["Warp Striker"][1].name
+    classNames["Wind Serpent"] = Talented.tabdata["Wind Serpent"][1].name
   elseif expac == 2 then
     classNames["Ferocity"] = Talented.tabdata["Ferocity"][1].name
     classNames["Tenacity"] = Talented.tabdata["Tenacity"][1].name
@@ -972,30 +994,36 @@ do
 	local menuColorCodes = {}
 	local function fill_menuColorCodes()
 		for name, default in pairs(RAID_CLASS_COLORS) do
-      if name ~= "DEATHKNIGHT"  or expac == 2 then
-        local color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[name] or default
-        menuColorCodes[name] = string.format("|cff%2x%2x%2x", color.r * 255, color.g * 255, color.b * 255)
-      end
+			if name ~= "DEATHKNIGHT"  or expac == 2 then
+				local color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[name] or default
+				menuColorCodes[name] = string.format("|cff%2x%2x%2x", color.r * 255, color.g * 255, color.b * 255)
+			end
 		end
-		menuColorCodes["Ferocity"] = "|cffe0a040"
-		menuColorCodes["Tenacity"] = "|cffe0a040"
-		menuColorCodes["Cunning"] = "|cffe0a040"
+	menuColorCodes["Ferocity"] = "|cffe0a040"
+	menuColorCodes["Tenacity"] = "|cffe0a040"
+	menuColorCodes["Cunning"] = "|cffe0a040"
     menuColorCodes["Bat"] = "|cffe0a040"
     menuColorCodes["Bear"] = "|cffe0a040"
     menuColorCodes["Boar"] = "|cffe0a040"
     menuColorCodes["Cat"] = "|cffe0a040"
     menuColorCodes["Crab"] = "|cffe0a040"
     menuColorCodes["Crocolisk"] = "|cffe0a040"
+	menuColorCodes["Dragonhawk"] = "|cffe0a040"
     menuColorCodes["Gorilla"] = "|cffe0a040"
     menuColorCodes["Hyena"] = "|cffe0a040"
     menuColorCodes["Raptor"] = "|cffe0a040"
+	menuColorCodes["Ravager"] = "|cffe0a040"
     menuColorCodes["Scorpid"] = "|cffe0a040"
+	menuColorCodes["Serpent"] = "|cffe0a040"
     menuColorCodes["Spider"] = "|cffe0a040"
+	menuColorCodes["Sporebat"] = "|cffe0a040"
     menuColorCodes["Tallstrider"] = "|cffe0a040"
     menuColorCodes["Turtle"] = "|cffe0a040"
     menuColorCodes["Wolf"] = "|cffe0a040"
     menuColorCodes["Bird of Prey"] = "|cffe0a040"
     menuColorCodes["Carrion Bird"] = "|cffe0a040"
+	menuColorCodes["Nether Ray"] = "|cffe0a040"
+	menuColorCodes["Warp Striker"] = "|cffe0a040"
     menuColorCodes["Wind Serpent"] = "|cffe0a040"
 	end
 	fill_menuColorCodes()
@@ -1138,7 +1166,47 @@ do
 
       menu[#menu + 1] = self:GetNamedMenu("separator")
     elseif expac == 1 then
-      --TBC Code Here
+		local petlist = {}
+		petlist[#petlist + 1] = "Bat"
+		petlist[#petlist + 1] = "Bear"
+		petlist[#petlist + 1] = "Boar"
+		petlist[#petlist + 1] = "Cat"
+		petlist[#petlist + 1] = "Crab"
+		petlist[#petlist + 1] = "Crocolisk"
+		petlist[#petlist + 1] = "Dragonhawk"
+		petlist[#petlist + 1] = "Gorilla"
+		petlist[#petlist + 1] = "Hyena"
+		petlist[#petlist + 1] = "Raptor"
+		petlist[#petlist + 1] = "Ravager"
+		petlist[#petlist + 1] = "Scorpid"
+		petlist[#petlist + 1] = "Serpent"
+		petlist[#petlist + 1] = "Spider"
+		petlist[#petlist + 1] = "Sporebat"
+		petlist[#petlist + 1] = "Tallstrider"
+		petlist[#petlist + 1] = "Turtle"
+		petlist[#petlist + 1] = "Wolf"
+		petlist[#petlist + 1] = "Bird of Prey" 
+		petlist[#petlist + 1] = "Carrion Bird" 
+		petlist[#petlist + 1] = "Nether Ray"
+		petlist[#petlist + 1] = "Warp Striker"
+		petlist[#petlist + 1] = "Wind Serpent" 
+
+		local petmenu = self:GetNamedMenu("HunterPets")
+      	petmenu.text = "Hunter Pets"
+      	petmenu.hasArrow = true
+      	petmenu.colorCode = menuColorCodes["HUNTER"]
+		petmenu.menuList = {}
+		for _, name in ipairs(petlist) do
+			entry = self:GetNamedMenu(name)
+			entry.text = classNames[name]
+			entry.colorCode = menuColorCodes[name]
+			entry.hasArrow = true
+			entry.menuList = self:GetNamedMenu(name .. "List")
+			petmenu.menuList[#petmenu.menuList + 1] = entry
+		end
+		menu[#menu + 1] = petmenu
+
+		menu[#menu + 1] = self:GetNamedMenu("separator")
     end
 
 		entry = self:GetNamedMenu("Inspected")
@@ -1365,7 +1433,56 @@ do
       end
       menuList[#menuList + 1] = petMenu
     elseif expac == 1 then
-      --TBC Code Here
+		local petlist = {}
+		petlist[#petlist + 1] = "Bat"
+		petlist[#petlist + 1] = "Bear"
+		petlist[#petlist + 1] = "Boar"
+		petlist[#petlist + 1] = "Cat"
+		petlist[#petlist + 1] = "Crab"
+		petlist[#petlist + 1] = "Crocolisk"
+		petlist[#petlist + 1] = "Dragonhawk"
+		petlist[#petlist + 1] = "Gorilla"
+		petlist[#petlist + 1] = "Hyena"
+		petlist[#petlist + 1] = "Raptor"
+		petlist[#petlist + 1] = "Ravager"
+		petlist[#petlist + 1] = "Scorpid"
+		petlist[#petlist + 1] = "Serpent"
+		petlist[#petlist + 1] = "Spider"
+		petlist[#petlist + 1] = "Sporebat"
+		petlist[#petlist + 1] = "Tallstrider"
+		petlist[#petlist + 1] = "Turtle"
+		petlist[#petlist + 1] = "Wolf"
+		petlist[#petlist + 1] = "Bird of Prey" 
+		petlist[#petlist + 1] = "Carrion Bird" 
+		petlist[#petlist + 1] = "Nether Ray"
+		petlist[#petlist + 1] = "Warp Striker"
+		petlist[#petlist + 1] = "Wind Serpent" 
+  
+		for _, name in ipairs(list) do
+			local s = {
+			  text = classNames[name],
+			  colorCode = menuColorCodes[name],
+			  func = Menu_NewTemplate,
+			  arg1 = name
+			}
+			menuList[#menuList + 1] = s
+		end
+		  
+		  local petMenu = self:GetNamedMenu("NewHunterPets")
+		  petMenu.text = "Hunter Pets"
+		  petMenu.hasArrow = true
+		  petMenu.colorCode = menuColorCodes["HUNTER"]
+		  petMenu.menuList = {}
+		  for _, name in ipairs(petlist) do
+			local s = {
+			  text = classNames[name],
+			  colorCode = menuColorCodes[name],
+			  func = Menu_NewTemplate,
+			  arg1 = name
+			}
+			petMenu.menuList[#petMenu.menuList + 1] = s
+		  end
+		  menuList[#menuList + 1] = petMenu
     end
 
 		menu[#menu + 1] = {
